@@ -25,10 +25,15 @@ export default defineConfig({
     { name: "mobile-chrome", use: { ...devices["Pixel 5"] } },
   ],
   webServer: {
-    command: "bun run build && bun run start",
+    // Use `next dev` in CI for reliability — Turbopack's `next build` has
+    // trouble with the @tailwindcss/oxide native module in some CI envs.
+    // Locally we still build (faster for repeated test runs).
+    command: process.env.CI
+      ? "bunx next dev -p 3000"
+      : "bun run build && bun run start",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    timeout: 240_000,
     env: {
       DATABASE_URL: "file:./test.db",
     },
