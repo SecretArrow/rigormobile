@@ -1,0 +1,17 @@
+# .prettierignore — skip CI-managed files that auto-fix can't push anyway
+# (the default GITHUB_TOKEN lacks `workflows:` permission to push changes
+#  to .github/workflows/* files).
+
+.github/workflows/**
+.github/dependabot.yml
+bun.lock
+**/bun.lock
+**/node_modules/**
+**/dist/**
+**/.next/**
+**/coverage/**
+**/playwright-report/**
+**/test-results/**
+**/.expo/**
+**/android/**
+**/ios/**
