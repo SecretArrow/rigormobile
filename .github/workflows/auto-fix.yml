@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.AUTO_FIX_PAT || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
