@@ -11,7 +11,7 @@ import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { PaperProvider, DefaultTheme, DarkTheme } from 'react-native-paper';
+import { PaperProvider, DefaultTheme, MD3DarkTheme } from 'react-native-paper';
 import { useColorScheme } from 'react-native';
 import { AppNavigator } from './src/screens/Navigator';
 import { initBackgroundService } from './src/services/background';
@@ -19,7 +19,7 @@ import { initCronjobs } from './src/services/cronjobs';
 
 export default function App() {
   const scheme = useColorScheme();
-  const theme = scheme === 'dark' ? DarkTheme : DefaultTheme;
+  const theme = scheme === 'dark' ? MD3DarkTheme : DefaultTheme;
 
   React.useEffect(() => {
     // Start the foreground service keeper + WorkManager cronjobs on mount.

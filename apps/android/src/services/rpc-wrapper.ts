@@ -11,16 +11,22 @@ import { Platform } from 'react-native';
 import { RigorRpcClient } from '@rigormobile/rigor-core/rpc';
 
 // RN lacks btoa — install a base64 encoder if needed.
-if (Platform.OS !== 'web' && typeof globalThis.btoa !== 'function') {
-  globalThis.btoa = (s: string) => {
-    // Lazy import to avoid pulling base64 into the bundle on web.
-    const { Buffer } = require('buffer');
-    return Buffer.from(s, 'utf-8').toString('base64');
+if (Platform.OS !== 'web') {
+  const g = globalThis as unknown as {
+    btoa?: (s: string) => string;
+    atob?: (s: string) => string;
   };
-  globalThis.atob = (s: string) => {
-    const { Buffer } = require('buffer');
-    return Buffer.from(s, 'base64').toString('utf-8');
-  };
+  if (typeof g.btoa !== 'function') {
+    g.btoa = (s: string) => {
+      // Lazy import to avoid pulling base64 into the bundle on web.
+      const { Buffer } = require('buffer');
+      return Buffer.from(s, 'utf-8').toString('base64');
+    };
+    g.atob = (s: string) => {
+      const { Buffer } = require('buffer');
+      return Buffer.from(s, 'base64').toString('utf-8');
+    };
+  }
 }
 
 export class RpcClientWrapper {

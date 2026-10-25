@@ -20,17 +20,22 @@ import { miningService } from './mining';
 const CHANNEL_ID = 'rigormobile-mining';
 const CHANNEL_NAME = 'RigorMobile Mining';
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+void sleep;
 
-const veryIntensiveTask = async (taskData: { title: string }) => {
-  await new Promise(async (resolve) => {
+const veryIntensiveTask = (taskData: { title?: string } | undefined) => {
+  return new Promise<void>((resolve) => {
     // Loop until miningService reports status !== 'running'
-    while (miningService['state'].status === 'running') {
+    const check = () => {
+      if (miningService['state'].status !== 'running') {
+        resolve();
+        return;
+      }
       // The actual mining happens inside miningService; we just keep this
       // async task alive so the foreground notification stays visible.
-      await sleep(1000);
-    }
-    resolve(undefined);
+      setTimeout(check, 1000);
+    };
+    check();
   });
 };
 

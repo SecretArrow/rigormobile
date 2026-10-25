@@ -193,12 +193,32 @@ export class RigorRpcClient {
   }
 }
 
-/** btoa that works in Node, browser, and RN. */
+/** btoa that works in Node, browser, and RN. Falls back to a pure-JS
+ *  implementation if neither `btoa` nor `Buffer` is available. */
 function btoaSafe(s: string): string {
   if (typeof btoa === 'function') return btoa(s);
   // Node
-  if (typeof Buffer !== 'undefined') {
-    return Buffer.from(s, 'utf-8').toString('base64');
+  const g = globalThis as unknown as { Buffer?: { from: (s: string, enc: string) => { toString: (enc: string) => string } } };
+  if (g.Buffer) {
+    return g.Buffer.from(s, 'utf-8').toString('base64');
   }
-  throw new Error('no btoa implementation available');
+  // Pure-JS fallback — small enough to inline.
+  return base64Encode(s);
+}
+
+/** Pure-JS UTF-8 → base64 encoder (last-resort fallback). */
+function base64Encode(s: string): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const bytes = new TextEncoder().encode(s);
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b0 = bytes[i] ?? 0;
+    const b1 = bytes[i + 1] ?? 0;
+    const b2 = bytes[i + 2] ?? 0;
+    const triple = (b0 << 16) | (b1 << 8) | b2;
+    out += chars[(triple >> 18) & 63] + chars[(triple >> 12) & 63];
+    out += i + 1 < bytes.length ? chars[(triple >> 6) & 63] : '=';
+    out += i + 2 < bytes.length ? chars[triple & 63] : '=';
+  }
+  return out;
 }
