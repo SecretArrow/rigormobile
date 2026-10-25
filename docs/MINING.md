@@ -7,7 +7,7 @@ with the 8-byte ASCII prefix `RGRPOW01`.
 ## The hash
 
 ```typescript
-digest = SHA3-256("RGRPOW01" || header_80)
+digest = SHA3 - 256("RGRPOW01" || header_80);
 ```
 
 - `RGRPOW01` is 8 ASCII bytes: `52 47 52 50 4f 57 30 31`
@@ -20,14 +20,14 @@ Implementation: [`packages/rigor-core/src/mining/kernel.ts`](../packages/rigor-c
 
 ## Header layout
 
-| Offset | Size | Field | Endian |
-|---|---|---|---|
-| 0 | 4 | version | int32 LE |
-| 4 | 32 | prevBlockHash | LE (as returned by `getblocktemplate`) |
-| 36 | 32 | merkleRoot | LE |
-| 68 | 4 | timestamp | uint32 LE |
-| 72 | 4 | bits | uint32 LE |
-| 76 | 4 | nonce | uint32 LE |
+| Offset | Size | Field         | Endian                                 |
+| ------ | ---- | ------------- | -------------------------------------- |
+| 0      | 4    | version       | int32 LE                               |
+| 4      | 32   | prevBlockHash | LE (as returned by `getblocktemplate`) |
+| 36     | 32   | merkleRoot    | LE                                     |
+| 68     | 4    | timestamp     | uint32 LE                              |
+| 72     | 4    | bits          | uint32 LE                              |
+| 76     | 4    | nonce         | uint32 LE                              |
 
 Implementation: [`packages/rigor-core/src/protocol/header.ts`](../packages/rigor-core/src/protocol/header.ts).
 
@@ -113,6 +113,7 @@ Kotlin module: TODO (placeholder at `apps/android/src/native/RigorOpenCLModule.k
 ### CPU single-thread (universal fallback)
 
 Last-resort. 30–80 kH/s. Used by:
+
 - React Native when OpenCL is unavailable
 - Node.js (via `worker_threads` — TODO in v0.2)
 - The web app when both WebGPU and Worker are unavailable (very rare)
@@ -122,18 +123,18 @@ Implementation: [`packages/rigor-core/src/mining/cpu.ts`](../packages/rigor-core
 ## Submitting a block
 
 ```typescript
-import { RigorRpcClient } from '@rigormobile/rigor-core/rpc';
+import { RigorRpcClient } from "@rigormobile/rigor-core/rpc";
 
 const rpc = new RigorRpcClient({
-  url: 'http://127.0.0.1:8761',
+  url: "http://127.0.0.1:8761",
   username: process.env.RIGOR_RPC_USER,
   password: process.env.RIGOR_RPC_PASS,
 });
 
 // header is the 80-byte block header with the winning nonce set
 const blockHex = Array.from(header)
-  .map((b) => b.toString(16).padStart(2, '0'))
-  .join('');
+  .map((b) => b.toString(16).padStart(2, "0"))
+  .join("");
 
 const result = await rpc.submitBlock(blockHex);
 // null = success; 'invalid' / 'invalid-cb-found' / etc = rejection

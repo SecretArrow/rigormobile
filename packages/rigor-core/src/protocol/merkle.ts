@@ -9,18 +9,19 @@
  * `getblocktemplate`.
  */
 
-import { sha256 } from '@noble/hashes/sha256';
+import { sha256 } from "@noble/hashes/sha256";
 
 /** Compute the merkle root from a list of 32-byte little-endian txids. */
 export function computeMerkleRoot(txids: Uint8Array[]): Uint8Array {
   if (txids.length === 0) {
-    throw new Error('merkle root requires at least one tx (the coinbase)');
+    throw new Error("merkle root requires at least one tx (the coinbase)");
   }
   if (txids.length === 1) {
     return txids[0]!.slice();
   }
   let level = txids.map((t) => {
-    if (t.length !== 32) throw new RangeError(`txid must be 32 bytes, got ${t.length}`);
+    if (t.length !== 32)
+      throw new RangeError(`txid must be 32 bytes, got ${t.length}`);
     return t.slice() as Uint8Array;
   });
   while (level.length > 1) {
@@ -47,9 +48,9 @@ export function doubleSha256(a: Uint8Array, b: Uint8Array): Uint8Array {
 
 /** Hex helper — returns a hex string (lowercase) for the given bytes. */
 export function toHex(bytes: Uint8Array): string {
-  let s = '';
+  let s = "";
   for (let i = 0; i < bytes.length; i++) {
-    s += bytes[i]!.toString(16).padStart(2, '0');
+    s += bytes[i]!.toString(16).padStart(2, "0");
   }
   return s;
 }

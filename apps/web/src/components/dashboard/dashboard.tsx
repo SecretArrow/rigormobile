@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { motion } from 'framer-motion';
+import * as React from "react";
+import { motion } from "framer-motion";
 import {
   Activity,
   Blocks,
@@ -12,16 +12,16 @@ import {
   Zap,
   Timer,
   TrendingUp,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   CHAIN_NAME,
   GENESIS_HASH,
@@ -32,15 +32,19 @@ import {
   BECH32_HRP,
   RGR_POW_TAG,
   TARGET_BLOCK_TIME,
-} from '@rigormobile/rigor-core/protocol';
+} from "@rigormobile/rigor-core/protocol";
 
 interface DashboardProps {
   hashrate: number;
-  minerStatus: 'idle' | 'starting' | 'running' | 'stopping' | 'error';
+  minerStatus: "idle" | "starting" | "running" | "stopping" | "error";
   minerBackend: string;
 }
 
-export function Dashboard({ hashrate, minerStatus, minerBackend }: DashboardProps) {
+export function Dashboard({
+  hashrate,
+  minerStatus,
+  minerBackend,
+}: DashboardProps) {
   return (
     <div className="space-y-4">
       {/* Top stat row */}
@@ -157,7 +161,10 @@ export function Dashboard({ hashrate, minerStatus, minerBackend }: DashboardProp
                 {((hashrate / 1_000_000) * 100).toFixed(2)}%
               </span>
             </div>
-            <Progress value={Math.min(100, (hashrate / 1_000_000) * 100)} className="h-2.5" />
+            <Progress
+              value={Math.min(100, (hashrate / 1_000_000) * 100)}
+              className="h-2.5"
+            />
           </div>
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div className="rounded-md border border-border/40 bg-background/40 p-3">
@@ -206,13 +213,7 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <Card
-        className={
-          accent
-            ? 'glass glow-emerald'
-            : 'glass'
-        }
-      >
+      <Card className={accent ? "glass glow-emerald" : "glass"}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between text-muted-foreground text-xs">
             <span className="inline-flex items-center gap-1.5">
@@ -251,11 +252,19 @@ function PipelineStep({
   );
 }
 
-function KV({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function KV({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
   return (
     <div className="flex items-center justify-between text-xs">
       <span className="text-muted-foreground">{label}</span>
-      <span className={mono ? 'hash-mono' : ''}>{value}</span>
+      <span className={mono ? "hash-mono" : ""}>{value}</span>
     </div>
   );
 }

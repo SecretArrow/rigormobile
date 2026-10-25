@@ -16,9 +16,9 @@
  * should fall back to the Worker pool.
  */
 
-import { Miner, type MinerBackend } from './miner';
-import type { MiningJob } from './worker';
-import { RGR_POW_TAG_BYTES } from '../protocol/constants';
+import { Miner, type MinerBackend } from "./miner";
+import type { MiningJob } from "./worker";
+import { RGR_POW_TAG_BYTES } from "../protocol/constants";
 
 /** WGSL source for the SHA3-256 Keccak kernel. */
 export const RIGOR_WGSL = /* wgsl */ `
@@ -82,12 +82,15 @@ export interface WebGpuMinerOptions {
 }
 
 export class WebGpuMiner extends Miner {
-  readonly backend: MinerBackend = 'webgpu';
+  readonly backend: MinerBackend = "webgpu";
   readonly parallelism = 1; // updated after init
   private device: unknown = undefined;
 
   async init(): Promise<boolean> {
-    const nav = (typeof navigator !== 'undefined' ? (navigator as AnyNavigator) : undefined);
+    const nav =
+      typeof navigator !== "undefined"
+        ? (navigator as AnyNavigator)
+        : undefined;
     if (!nav?.gpu) return false;
     try {
       const adapter = await nav.gpu.requestAdapter();
@@ -106,7 +109,7 @@ export class WebGpuMiner extends Miner {
     if (!this.device) {
       const ok = await this.init();
       if (!ok) {
-        this.emit('error', { message: 'WebGPU unavailable — falling back' });
+        this.emit("error", { message: "WebGPU unavailable — falling back" });
         return;
       }
     }
@@ -119,18 +122,19 @@ export class WebGpuMiner extends Miner {
     // For now we run the JS kernel inside this loop until the full WGSL
     // Keccak port is wired up. This keeps the public API stable while the
     // GPU kernel is being finished.
-    const { runJob } = await import('./worker');
+    const { runJob } = await import("./worker");
     runJob(job, this.handleWorkerMessage, {
       statsIntervalMs: 1000,
       shouldStop: () => this.stopped,
     });
-    this.emit('stopped', undefined);
+    this.emit("stopped", undefined);
   }
 }
 
 /** Public helper used by the miner UI: returns true if WebGPU is usable. */
 export async function isWebGpuAvailable(): Promise<boolean> {
-  const nav = (typeof navigator !== 'undefined' ? (navigator as AnyNavigator) : undefined);
+  const nav =
+    typeof navigator !== "undefined" ? (navigator as AnyNavigator) : undefined;
   if (!nav?.gpu) return false;
   try {
     const adapter = await nav.gpu.requestAdapter();

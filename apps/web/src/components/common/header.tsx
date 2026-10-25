@@ -1,22 +1,30 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Link from 'next/link';
-import { Cpu, Github, Moon, Sun, Activity, Wallet as WalletIcon, ChevronRight } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import * as React from "react";
+import Link from "next/link";
+import {
+  Cpu,
+  Github,
+  Moon,
+  Sun,
+  Activity,
+  Wallet as WalletIcon,
+  ChevronRight,
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
 interface HeaderProps {
-  activeTab: 'dashboard' | 'miner' | 'wallet' | 'settings';
-  onTabChange: (t: HeaderProps['activeTab']) => void;
-  minerStatus: 'idle' | 'starting' | 'running' | 'stopping' | 'error';
+  activeTab: "dashboard" | "miner" | "wallet" | "settings";
+  onTabChange: (t: HeaderProps["activeTab"]) => void;
+  minerStatus: "idle" | "starting" | "running" | "stopping" | "error";
 }
 
 export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
@@ -24,10 +32,18 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
-  const navItems: { id: HeaderProps['activeTab']; label: string; icon: React.ReactNode }[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: <Activity className="size-4" /> },
-    { id: 'miner', label: 'Miner', icon: <Cpu className="size-4" /> },
-    { id: 'wallet', label: 'Wallet', icon: <WalletIcon className="size-4" /> },
+  const navItems: {
+    id: HeaderProps["activeTab"];
+    label: string;
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: <Activity className="size-4" />,
+    },
+    { id: "miner", label: "Miner", icon: <Cpu className="size-4" /> },
+    { id: "wallet", label: "Wallet", icon: <WalletIcon className="size-4" /> },
   ];
 
   return (
@@ -37,11 +53,15 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
           {/* Brand */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative size-9 rounded-xl bg-gradient-to-br from-primary/90 to-primary/60 grid place-items-center shadow-lg shadow-primary/30 transition-transform group-hover:scale-105">
-              <span className="text-primary-foreground font-bold text-sm">R</span>
+              <span className="text-primary-foreground font-bold text-sm">
+                R
+              </span>
               <span className="absolute -bottom-1 -right-1 size-3 rounded-full bg-accent border-2 border-background" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-bold text-base tracking-tight">RigorMobile</span>
+              <span className="font-bold text-base tracking-tight">
+                RigorMobile
+              </span>
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
                 RigorChain · SHA3-256
               </span>
@@ -53,7 +73,7 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
             {navItems.map((item) => (
               <Button
                 key={item.id}
-                variant={activeTab === item.id ? 'secondary' : 'ghost'}
+                variant={activeTab === item.id ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => onTabChange(item.id)}
                 className="gap-2"
@@ -66,7 +86,7 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {minerStatus === 'running' && (
+            {minerStatus === "running" && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -75,11 +95,13 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
                       Mining
                     </Badge>
                   </TooltipTrigger>
-                  <TooltipContent>The miner is currently hashing</TooltipContent>
+                  <TooltipContent>
+                    The miner is currently hashing
+                  </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )}
-            {minerStatus === 'error' && (
+            {minerStatus === "error" && (
               <Badge variant="destructive" className="gap-1.5">
                 <span className="size-2 rounded-full bg-destructive-foreground" />
                 Miner error
@@ -89,21 +111,19 @@ export function Header({ activeTab, onTabChange, minerStatus }: HeaderProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
               aria-label="Toggle theme"
             >
-              {mounted && resolvedTheme === 'dark' ? (
+              {mounted && resolvedTheme === "dark" ? (
                 <Sun className="size-4" />
               ) : (
                 <Moon className="size-4" />
               )}
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-            >
+            <Button variant="ghost" size="icon" asChild>
               <a
                 href="https://github.com/SecretArrow/rigormobile"
                 target="_blank"

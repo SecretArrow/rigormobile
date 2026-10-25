@@ -8,10 +8,10 @@
  * / Node) is responsible for wiring up the `postMessage` callback.
  */
 
-import { rigorHash } from './kernel';
-import { checkHash } from './kernel';
-import { setNonce, setTimestamp } from '../protocol/header';
-import { HEADER_SIZE } from '../protocol/constants';
+import { rigorHash } from "./kernel";
+import { checkHash } from "./kernel";
+import { setNonce, setTimestamp } from "../protocol/header";
+import { HEADER_SIZE } from "../protocol/constants";
 
 /** A mining job: a fully-formed 80-byte header with nonce = 0, plus the
  *  compact `bits` target and the range of nonces this worker should scan. */
@@ -32,7 +32,7 @@ export interface MiningJob {
 
 /** Periodic stats posted by the worker to the host. */
 export interface MiningStats {
-  type: 'stats';
+  type: "stats";
   jobId?: string;
   hashes: number;
   hashesPerSecond: number;
@@ -43,7 +43,7 @@ export interface MiningStats {
 
 /** Posted when a valid solution is found. */
 export interface SolutionFound {
-  type: 'solution';
+  type: "solution";
   jobId?: string;
   nonce: number;
   header: Uint8Array;
@@ -52,7 +52,7 @@ export interface SolutionFound {
 
 /** Posted when the worker has finished scanning its assigned range. */
 export interface JobDone {
-  type: 'done';
+  type: "done";
   jobId?: string;
   hashes: number;
   elapsedMs: number;
@@ -60,7 +60,7 @@ export interface JobDone {
 
 /** Posted when an error occurs in the worker. */
 export interface JobError {
-  type: 'error';
+  type: "error";
   jobId?: string;
   message: string;
 }
@@ -88,7 +88,7 @@ export function runJob(
 
   if (job.header.length !== HEADER_SIZE) {
     post({
-      type: 'error',
+      type: "error",
       jobId: job.jobId,
       message: `header must be ${HEADER_SIZE} bytes, got ${job.header.length}`,
     });
@@ -120,7 +120,7 @@ export function runJob(
     if (valid) {
       // Post the solution immediately; the host will stop us via shouldStop.
       post({
-        type: 'solution',
+        type: "solution",
         jobId: job.jobId,
         nonce,
         header: header.slice(),
@@ -133,7 +133,7 @@ export function runJob(
       if (shouldStop()) {
         const now = Date.now();
         post({
-          type: 'stats',
+          type: "stats",
           jobId: job.jobId,
           hashes,
           hashesPerSecond: (hashes * 1000) / Math.max(1, now - start),
@@ -145,7 +145,7 @@ export function runJob(
       const now = Date.now();
       if (now - lastStats >= statsIntervalMs) {
         post({
-          type: 'stats',
+          type: "stats",
           jobId: job.jobId,
           hashes,
           hashesPerSecond: (hashes * 1000) / Math.max(1, now - start),
@@ -162,7 +162,7 @@ export function runJob(
 
   const now = Date.now();
   post({
-    type: 'stats',
+    type: "stats",
     jobId: job.jobId,
     hashes,
     hashesPerSecond: (hashes * 1000) / Math.max(1, now - start),
@@ -170,7 +170,7 @@ export function runJob(
     lastNonce: nonce,
   });
   post({
-    type: 'done',
+    type: "done",
     jobId: job.jobId,
     hashes,
     elapsedMs: now - start,

@@ -11,11 +11,11 @@
  * coin type 0' can pass it explicitly to {@link deriveRigorAddress}.
  */
 
-import { HDKey } from '@scure/bip32';
-import { mnemonicToSeedSync } from '@scure/bip39';
-import { sha256 } from '@noble/hashes/sha256';
-import { ripemd160 } from '@noble/hashes/legacy';
-import { encodeAddress, decodeAddress } from './bech32';
+import { HDKey } from "@scure/bip32";
+import { mnemonicToSeedSync } from "@scure/bip39";
+import { sha256 } from "@noble/hashes/sha256";
+import { ripemd160 } from "@noble/hashes/legacy";
+import { encodeAddress, decodeAddress } from "./bech32";
 
 /** BIP44 coin type used for RigorChain mainnet. */
 export const RIGOR_COIN_TYPE = 8760;
@@ -76,17 +76,11 @@ export class RigorHdWallet {
 
   /** Derive the account-level xprv/xpub for a given account index. */
   deriveAccount(account = 0): HDKey {
-    return this.root.derive(
-      `m/44'/${RIGOR_COIN_TYPE}'/${account}'`,
-    ) as HDKey;
+    return this.root.derive(`m/44'/${RIGOR_COIN_TYPE}'/${account}'`) as HDKey;
   }
 
   /** Derive a single SegWit v0 (p2wpkh) address. */
-  deriveAddress(
-    account = 0,
-    change = 0,
-    index = 0,
-  ): DerivedAddress {
+  deriveAddress(account = 0, change = 0, index = 0): DerivedAddress {
     const path = rigorDerivationPath(account, change, index);
     const child = this.root.derive(path);
     if (!child?.publicKey) {
@@ -127,7 +121,7 @@ export class RigorHdWallet {
       throw new Error(`no private key at path ${path}`);
     }
     // Lazy import to avoid pulling secp256k1 into bundles that don't sign.
-    const { secp256k1 } = await import('@noble/curves/secp256k1');
+    const { secp256k1 } = await import("@noble/curves/secp256k1");
     const sig = secp256k1.sign(digest, child.privateKey);
     return sig.toCompactRawBytes();
   }
@@ -138,18 +132,18 @@ export class RigorHdWallet {
     digest: Uint8Array,
     signature: Uint8Array,
   ): Promise<boolean> {
-    const { secp256k1 } = await import('@noble/curves/secp256k1');
+    const { secp256k1 } = await import("@noble/curves/secp256k1");
     return secp256k1.verify(signature, digest, pubKey);
   }
 
   /** Export the wallet as an extended private key (BIP32 xprv). */
   exportXprv(): string {
-    return this.root.privateExtendedKey ?? '';
+    return this.root.privateExtendedKey ?? "";
   }
 
   /** Export the wallet as an extended public key (BIP32 xpub). Safe to share. */
   exportXpub(): string {
-    return this.root.publicExtendedKey ?? '';
+    return this.root.publicExtendedKey ?? "";
   }
 
   /** Decode a `rg…` address into its witness program (no key lookup). */
@@ -165,9 +159,9 @@ export function hash160(data: Uint8Array): Uint8Array {
 
 /** Hex-encode a Uint8Array (lowercase). */
 export function bytesToHex(bytes: Uint8Array): string {
-  let s = '';
+  let s = "";
   for (let i = 0; i < bytes.length; i++) {
-    s += bytes[i]!.toString(16).padStart(2, '0');
+    s += bytes[i]!.toString(16).padStart(2, "0");
   }
   return s;
 }

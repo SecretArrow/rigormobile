@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from '@/components/common/header';
-import { Footer } from '@/components/common/footer';
-import { Dashboard } from '@/components/dashboard/dashboard';
-import { MinerPanel } from '@/components/miner/miner-panel';
-import { WalletPanel } from '@/components/wallet/wallet-panel';
+import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Header } from "@/components/common/header";
+import { Footer } from "@/components/common/footer";
+import { Dashboard } from "@/components/dashboard/dashboard";
+import { MinerPanel } from "@/components/miner/miner-panel";
+import { WalletPanel } from "@/components/wallet/wallet-panel";
 
-type Tab = 'dashboard' | 'miner' | 'wallet' | 'settings';
+type Tab = "dashboard" | "miner" | "wallet" | "settings";
 
 export default function HomePage() {
-  const [tab, setTab] = React.useState<Tab>('dashboard');
+  const [tab, setTab] = React.useState<Tab>("dashboard");
   const [hashrate, setHashrate] = React.useState(0);
   const [minerStatus, setMinerStatus] = React.useState<
-    'idle' | 'starting' | 'running' | 'stopping' | 'error'
-  >('idle');
-  const [minerBackend, setMinerBackend] = React.useState('idle');
+    "idle" | "starting" | "running" | "stopping" | "error"
+  >("idle");
+  const [minerBackend, setMinerBackend] = React.useState("idle");
 
   // The MinerPanel reports hashrate upward; we mirror it for the Dashboard.
   // Miner status is inferred from the same source.
@@ -38,19 +38,19 @@ export default function HomePage() {
           >
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {tab === 'dashboard' && 'Dashboard'}
-                {tab === 'miner' && 'Miner'}
-                {tab === 'wallet' && 'Wallet'}
-                {tab === 'settings' && 'Settings'}
+                {tab === "dashboard" && "Dashboard"}
+                {tab === "miner" && "Miner"}
+                {tab === "wallet" && "Wallet"}
+                {tab === "settings" && "Settings"}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {tab === 'dashboard' &&
-                  'Live overview of your RigorChain mining engine and network constants.'}
-                {tab === 'miner' &&
-                  'Browser-based SHA3-256 (RGRPOW01) miner — WebGPU when available, Worker pool fallback.'}
-                {tab === 'wallet' &&
-                  'BIP32 / BIP44 HD wallet for RigorChain Bech32 rg addresses.'}
-                {tab === 'settings' && 'App settings and preferences.'}
+                {tab === "dashboard" &&
+                  "Live overview of your RigorChain mining engine and network constants."}
+                {tab === "miner" &&
+                  "Browser-based SHA3-256 (RGRPOW01) miner — WebGPU when available, Worker pool fallback."}
+                {tab === "wallet" &&
+                  "BIP32 / BIP44 HD wallet for RigorChain Bech32 rg addresses."}
+                {tab === "settings" && "App settings and preferences."}
               </p>
             </div>
           </motion.div>
@@ -63,31 +63,31 @@ export default function HomePage() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
             >
-              {tab === 'dashboard' && (
+              {tab === "dashboard" && (
                 <Dashboard
                   hashrate={hashrate}
                   minerStatus={minerStatus}
                   minerBackend={minerBackend}
                 />
               )}
-              {tab === 'miner' && (
+              {tab === "miner" && (
                 <MinerPanel
                   onHashRate={(hps) => {
                     handleHashRate(hps);
                     // Infer status from hashrate transitions
                     if (hps > 0) {
-                      setMinerStatus('running');
+                      setMinerStatus("running");
                       setMinerBackend(
-                        typeof navigator !== 'undefined' && 'gpu' in navigator
-                          ? 'webgpu'
-                          : 'worker-pool',
+                        typeof navigator !== "undefined" && "gpu" in navigator
+                          ? "webgpu"
+                          : "worker-pool",
                       );
                     }
                   }}
                 />
               )}
-              {tab === 'wallet' && <WalletPanel />}
-              {tab === 'settings' && <SettingsPlaceholder />}
+              {tab === "wallet" && <WalletPanel />}
+              {tab === "settings" && <SettingsPlaceholder />}
             </motion.div>
           </AnimatePresence>
         </div>

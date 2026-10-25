@@ -6,11 +6,11 @@
  * iteration by the mining kernel.
  */
 
-import { serializeHeader, type BlockHeader } from '../protocol/header';
-import { computeMerkleRoot, reverseBytes } from '../protocol/merkle';
-import { HEADER_SIZE } from '../protocol/constants';
-import { hexToBytes } from '../utils/index';
-import type { MiningJob } from './worker';
+import { serializeHeader, type BlockHeader } from "../protocol/header";
+import { computeMerkleRoot, reverseBytes } from "../protocol/merkle";
+import { HEADER_SIZE } from "../protocol/constants";
+import { hexToBytes } from "../utils/index";
+import type { MiningJob } from "./worker";
 
 /** Subset of the JSON returned by `getblocktemplate` that we consume. */
 export interface BlockTemplate {
@@ -38,12 +38,14 @@ export function templateToHeader(tpl: BlockTemplate): {
 } {
   // 1. Coinbase tx (the first tx in the merkle tree)
   const coinbaseTxid = tpl.coinbasetxn?.txid ?? tpl.coinbasetxn?.hash;
-  if (!coinbaseTxid) throw new Error('coinbasetxn.txid missing in template');
+  if (!coinbaseTxid) throw new Error("coinbasetxn.txid missing in template");
 
   // 2. All txids in display hex; convert to little-endian bytes for merkle
   const txids: Uint8Array[] = [
     hexToBytesRev(coinbaseTxid),
-    ...(tpl.transactions ?? []).map((tx) => hexToBytesRev(tx.txid ?? tx.hash ?? '')),
+    ...(tpl.transactions ?? []).map((tx) =>
+      hexToBytesRev(tx.txid ?? tx.hash ?? ""),
+    ),
   ];
 
   // 3. Merkle root (little-endian, as it appears in the header)

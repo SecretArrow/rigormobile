@@ -5,11 +5,13 @@ Each entry starts with `---` and follows the template defined in the
 parent project's agent instructions.
 
 ---
+
 Task ID: 1
 Agent: main (Z.ai)
 Task: Build RigorChain web miner + web wallet + Android GPU miner APK as a single monorepo, push to SecretArrow/rigormobile, set up GitHub Actions CI/CD (lint + unit + e2e + auto-fix + APK build), no local builds, modern UI/UX redesign, background process + cronjobs.
 
 Work Log:
+
 - Verified the GitHub PAT (user: SecretArrow). The repo `SecretArrow/rigormobile`
   did not exist — created it via the GitHub API.
 - Fetched the RigorChain spec from https://github.com/rigorchain/rigorchain:
@@ -55,6 +57,7 @@ Work Log:
   HTTP 200, Agent Browser confirms Dashboard/Miner/Wallet tabs render.
 
 Stage Summary:
+
 - All code committed and pushed to `SecretArrow/rigormobile`.
 - 22/22 unit tests pass, web app builds clean, APK build is wired via
   GitHub Actions (no local build required).

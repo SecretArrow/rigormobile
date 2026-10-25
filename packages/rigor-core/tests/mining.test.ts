@@ -1,28 +1,32 @@
-import { describe, it, expect } from 'vitest';
-import { rigorHash, rigorHashHex, checkHash } from '../src/mining/kernel.js';
-import { serializeHeader, deserializeHeader, setNonce } from '../src/protocol/header.js';
+import { describe, it, expect } from "vitest";
+import { rigorHash, rigorHashHex, checkHash } from "../src/mining/kernel.js";
+import {
+  serializeHeader,
+  deserializeHeader,
+  setNonce,
+} from "../src/protocol/header.js";
 
-describe('rigorHash kernel', () => {
-  it('produces a 32-byte digest', () => {
+describe("rigorHash kernel", () => {
+  it("produces a 32-byte digest", () => {
     const header = new Uint8Array(80);
     const digest = rigorHash(header);
     expect(digest.length).toBe(32);
   });
 
-  it('produces the same hex as the byte digest', () => {
+  it("produces the same hex as the byte digest", () => {
     const header = new Uint8Array(80);
     header[0] = 0x42;
     const bytes = rigorHash(header);
     const hex = rigorHashHex(header);
     expect(hex.length).toBe(64);
-    let expected = '';
+    let expected = "";
     for (let i = 0; i < bytes.length; i++) {
-      expected += bytes[i]!.toString(16).padStart(2, '0');
+      expected += bytes[i]!.toString(16).padStart(2, "0");
     }
     expect(hex).toBe(expected);
   });
 
-  it('is deterministic — same header → same digest', () => {
+  it("is deterministic — same header → same digest", () => {
     const header = new Uint8Array(80);
     for (let i = 0; i < 80; i++) header[i] = (i * 7) & 0xff;
     const d1 = rigorHash(header);
@@ -30,7 +34,7 @@ describe('rigorHash kernel', () => {
     expect(Array.from(d1)).toEqual(Array.from(d2));
   });
 
-  it('changes when the nonce changes', () => {
+  it("changes when the nonce changes", () => {
     const header = new Uint8Array(80);
     for (let i = 0; i < 80; i++) header[i] = (i * 7) & 0xff;
     const d1 = rigorHash(header);
@@ -40,8 +44,8 @@ describe('rigorHash kernel', () => {
   });
 });
 
-describe('checkHash with easy target', () => {
-  it('detects a valid solution against a low-difficulty target', () => {
+describe("checkHash with easy target", () => {
+  it("detects a valid solution against a low-difficulty target", () => {
     const header = new Uint8Array(80);
     // bits = 0x207fffff → target = 0x7fffff000…0 (very easy)
     const bits = 0x207fffff;
@@ -56,7 +60,7 @@ describe('checkHash with easy target', () => {
     expect(found).toBe(true);
   });
 
-  it('rejects everything against an impossible target', () => {
+  it("rejects everything against an impossible target", () => {
     const header = new Uint8Array(80);
     const bits = 0x01000000; // exponent=1, target=0 — nothing can satisfy
     for (let n = 0; n < 100; n++) {
@@ -67,8 +71,8 @@ describe('checkHash with easy target', () => {
   });
 });
 
-describe('header serialization round trip', () => {
-  it('serializes and parses back identically', () => {
+describe("header serialization round trip", () => {
+  it("serializes and parses back identically", () => {
     const original = {
       version: 0x20000000,
       prevBlockHash: new Uint8Array(32).fill(0xab),
@@ -84,7 +88,11 @@ describe('header serialization round trip', () => {
     expect(parsed.timestamp).toBe(original.timestamp);
     expect(parsed.bits).toBe(original.bits);
     expect(parsed.nonce).toBe(original.nonce);
-    expect(Array.from(parsed.prevBlockHash)).toEqual(Array.from(original.prevBlockHash));
-    expect(Array.from(parsed.merkleRoot)).toEqual(Array.from(original.merkleRoot));
+    expect(Array.from(parsed.prevBlockHash)).toEqual(
+      Array.from(original.prevBlockHash),
+    );
+    expect(Array.from(parsed.merkleRoot)).toEqual(
+      Array.from(original.merkleRoot),
+    );
   });
 });

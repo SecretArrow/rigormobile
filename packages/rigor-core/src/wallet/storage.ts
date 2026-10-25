@@ -11,14 +11,14 @@
  * these functions.
  */
 
-import { bytesToHex, hexToBytes } from './hd';
+import { bytesToHex, hexToBytes } from "./hd";
 
 export interface EncryptedWallet {
   /** Format version, currently 1. */
   v: 1;
   /** KDF parameters used to derive the AES key from the password. */
   kdf: {
-    name: 'scrypt';
+    name: "scrypt";
     n: number;
     r: number;
     p: number;
@@ -27,7 +27,7 @@ export interface EncryptedWallet {
   };
   /** AES-GCM parameters. */
   cipher: {
-    name: 'AES-GCM';
+    name: "AES-GCM";
     ivHex: string;
     ciphertextHex: string;
   };
@@ -53,15 +53,15 @@ export async function encryptWallet(
   const key = await deriveKey(password, salt, DEFAULT_SCRYPT);
   const enc = new TextEncoder().encode(plaintext);
   const cipher = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: iv as BufferSource },
+    { name: "AES-GCM", iv: iv as BufferSource },
     key,
     enc as BufferSource,
   );
   return {
     v: 1,
-    kdf: { name: 'scrypt', saltHex: bytesToHex(salt), ...DEFAULT_SCRYPT },
+    kdf: { name: "scrypt", saltHex: bytesToHex(salt), ...DEFAULT_SCRYPT },
     cipher: {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       ivHex: bytesToHex(iv),
       ciphertextHex: bytesToHex(new Uint8Array(cipher)),
     },
@@ -74,13 +74,14 @@ export async function decryptWallet(
   sealed: EncryptedWallet,
   password: string,
 ): Promise<string> {
-  if (sealed.v !== 1) throw new Error(`unsupported wallet version: ${sealed.v}`);
+  if (sealed.v !== 1)
+    throw new Error(`unsupported wallet version: ${sealed.v}`);
   const salt = hexToBytes(sealed.kdf.saltHex);
   const iv = hexToBytes(sealed.cipher.ivHex);
   const cipher = hexToBytes(sealed.cipher.ciphertextHex);
   const key = await deriveKey(password, salt, sealed.kdf);
   const plain = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: iv as BufferSource },
+    { name: "AES-GCM", iv: iv as BufferSource },
     key,
     cipher as BufferSource,
   );
@@ -95,7 +96,7 @@ async function deriveKey(
 ): Promise<CryptoKey> {
   // scrypt via Web Crypto isn't standard; we use a pure-JS implementation
   // pulled in on demand. The result is wrapped into a CryptoKey for AES-GCM.
-  const { scrypt } = await import('@noble/hashes/scrypt');
+  const { scrypt } = await import("@noble/hashes/scrypt");
   const pwd = new TextEncoder().encode(password);
   const dk = scrypt(pwd, salt, {
     N: params.n,
@@ -104,10 +105,10 @@ async function deriveKey(
     dkLen: params.dkLen,
   });
   return crypto.subtle.importKey(
-    'raw',
+    "raw",
     dk as BufferSource,
-    { name: 'AES-GCM' },
+    { name: "AES-GCM" },
     false,
-    ['encrypt', 'decrypt'],
+    ["encrypt", "decrypt"],
   );
 }

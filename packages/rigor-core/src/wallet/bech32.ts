@@ -8,8 +8,8 @@
  * the browser, Node, and React Native without polyfills.
  */
 
-import { bech32, bech32m } from '@scure/base';
-import { BECH32_HRP } from '../protocol/constants';
+import { bech32, bech32m } from "@scure/base";
+import { BECH32_HRP } from "../protocol/constants";
 
 export interface Bech32Address {
   hrp: string;
@@ -24,7 +24,9 @@ export function encodeAddress(program: Uint8Array, witnessVersion = 0): string {
   }
   if (witnessVersion === 0) {
     if (program.length !== 20 && program.length !== 32) {
-      throw new RangeError('v0 program must be 20 (p2wpkh) or 32 (p2wsh) bytes');
+      throw new RangeError(
+        "v0 program must be 20 (p2wpkh) or 32 (p2wsh) bytes",
+      );
     }
     const hrp = BECH32_HRP as `${string}1${string}`;
     return bech32.encode(hrp, [0, ...bech32.toWords(program)]);

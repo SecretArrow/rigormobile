@@ -21,11 +21,11 @@ Implementation: [`packages/rigor-core/src/wallet/hd.ts`](../packages/rigor-core/
 
 ## Address format
 
-| Type | Witness version | Bech32 variant | Length |
-|---|---|---|---|
-| p2wpkh (default) | 0 | Bech32 | 20 bytes |
-| p2wsh (multisig) | 0 | Bech32 | 32 bytes |
-| p2tr (Taproot, TODO) | 1 | Bech32m | 32 bytes |
+| Type                 | Witness version | Bech32 variant | Length   |
+| -------------------- | --------------- | -------------- | -------- |
+| p2wpkh (default)     | 0               | Bech32         | 20 bytes |
+| p2wsh (multisig)     | 0               | Bech32         | 32 bytes |
+| p2tr (Taproot, TODO) | 1               | Bech32m        | 32 bytes |
 
 A typical RigorMobile address looks like:
 
@@ -58,10 +58,10 @@ xprv ─► AES-256-GCM(iv=12 random bytes) ─► ciphertext + tag
 
 Storage locations:
 
-| Platform | API | Notes |
-|---|---|---|
-| Web | `localStorage` | Survives page reloads, scoped to origin |
-| Android | `expo-secure-store` | Android Keystore-backed, encrypted at rest |
+| Platform | API                 | Notes                                      |
+| -------- | ------------------- | ------------------------------------------ |
+| Web      | `localStorage`      | Survives page reloads, scoped to origin    |
+| Android  | `expo-secure-store` | Android Keystore-backed, encrypted at rest |
 
 Implementation: [`packages/rigor-core/src/wallet/storage.ts`](../packages/rigor-core/src/wallet/storage.ts).
 

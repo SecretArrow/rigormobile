@@ -17,7 +17,7 @@ digest = SHA3-256("RGRPOW01" || header_80)
 ```
 
 - **Consensus**: ASERT (aserti3-2d), 10-minute blocks, 128 ORU per block
-- **Magic**: `ce f1 db fa`  ·  **P2P**: 8760  ·  **RPC**: 8761  ·  **Bech32 HRP**: `rg`
+- **Magic**: `ce f1 db fa` · **P2P**: 8760 · **RPC**: 8761 · **Bech32 HRP**: `rg`
 - **Solo mining**: `getblocktemplate` → coinbase → nonce search → `submitblock`
 
 ## Repository layout
@@ -46,13 +46,13 @@ generate a `rg1…` address and inspect your balance.
 
 ## CI/CD pipelines
 
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| `ci.yml` | push, PR | Bun cache, typecheck, ESLint, Prettier check, Vitest unit tests |
-| `e2e.yml` | push to main, PR | Playwright end-to-end against a prod Next.js build |
-| `auto-fix.yml` | push to main | Auto-commit `prettier --write` + `eslint --fix` fixes |
-| `build-apk.yml` | push to main, tag `v*` | Expo prebuild → Gradle assemble Release APK → upload artifact |
-| `release.yml` | tag `v*` | Cross-link: attach APK to GitHub Release |
+| Workflow        | Trigger                | Purpose                                                         |
+| --------------- | ---------------------- | --------------------------------------------------------------- |
+| `ci.yml`        | push, PR               | Bun cache, typecheck, ESLint, Prettier check, Vitest unit tests |
+| `e2e.yml`       | push to main, PR       | Playwright end-to-end against a prod Next.js build              |
+| `auto-fix.yml`  | push to main           | Auto-commit `prettier --write` + `eslint --fix` fixes           |
+| `build-apk.yml` | push to main, tag `v*` | Expo prebuild → Gradle assemble Release APK → upload artifact   |
+| `release.yml`   | tag `v*`               | Cross-link: attach APK to GitHub Release                        |
 
 All pipelines cache aggressively (Bun store, Turbo remote cache, Gradle +
 `~/.gradle/caches`, Android SDK). Average cold-build time ≈ 6–9 min; warm

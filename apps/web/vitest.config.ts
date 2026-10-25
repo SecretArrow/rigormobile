@@ -1,10 +1,10 @@
-import { defineConfig } from 'vitest/config';
-import path from 'node:path';
+import { defineConfig } from "vitest/config";
+import path from "node:path";
 
 export default defineConfig({
   test: {
-    include: ['tests/unit/**/*.test.{ts,tsx}'],
-    environment: 'node',
+    include: ["tests/unit/**/*.test.{ts,tsx}"],
+    environment: "node",
     globals: false,
   },
   // Disable all CSS / PostCSS / Tailwind processing for unit tests —
@@ -14,7 +14,7 @@ export default defineConfig({
   css: false,
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

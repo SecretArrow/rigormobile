@@ -13,10 +13,10 @@
  * `mining/webgpu.ts`) and falls back to this JS kernel in a Worker pool.
  */
 
-import { sha3_256 } from 'js-sha3';
-import { RGR_POW_TAG_BYTES } from '../protocol/constants';
-import { decodeCompact, cmpBytes } from '../protocol/constants';
-import { HEADER_SIZE } from '../protocol/constants';
+import { sha3_256 } from "js-sha3";
+import { RGR_POW_TAG_BYTES } from "../protocol/constants";
+import { decodeCompact, cmpBytes } from "../protocol/constants";
+import { HEADER_SIZE } from "../protocol/constants";
 
 /**
  * Compute the RigorChain PoW hash for an 80-byte header.
@@ -26,7 +26,9 @@ import { HEADER_SIZE } from '../protocol/constants';
  */
 export function rigorHash(header80: Uint8Array): Uint8Array {
   if (header80.length !== HEADER_SIZE) {
-    throw new RangeError(`header must be ${HEADER_SIZE} bytes, got ${header80.length}`);
+    throw new RangeError(
+      `header must be ${HEADER_SIZE} bytes, got ${header80.length}`,
+    );
   }
   const buf = new Uint8Array(HEADER_SIZE + RGR_POW_TAG_BYTES.length);
   buf.set(RGR_POW_TAG_BYTES, 0);
@@ -61,9 +63,9 @@ export function checkHash(
  */
 export function rigorHashHex(header80: Uint8Array): string {
   const bytes = rigorHash(header80);
-  let hex = '';
+  let hex = "";
   for (let i = 0; i < bytes.length; i++) {
-    hex += bytes[i].toString(16).padStart(2, '0');
+    hex += bytes[i].toString(16).padStart(2, "0");
   }
   return hex;
 }

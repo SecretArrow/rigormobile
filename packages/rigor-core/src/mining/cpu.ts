@@ -3,11 +3,11 @@
  * WebGPU nor Worker is available. Also useful for unit tests.
  */
 
-import { Miner, type MinerBackend } from './miner';
-import { runJob, type MiningJob } from './worker';
+import { Miner, type MinerBackend } from "./miner";
+import { runJob, type MiningJob } from "./worker";
 
 export class CpuMiner extends Miner {
-  readonly backend: MinerBackend = 'cpu';
+  readonly backend: MinerBackend = "cpu";
   readonly parallelism = 1;
   private runner: Promise<void> | null = null;
 
@@ -25,6 +25,6 @@ export class CpuMiner extends Miner {
       resolve();
     });
     await this.runner;
-    this.emit('stopped', undefined);
+    this.emit("stopped", undefined);
   }
 }

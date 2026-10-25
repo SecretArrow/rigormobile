@@ -57,18 +57,18 @@ export default function RootLayout({
   // transitive dep, 19.3.x for the app). Use React.createElement so the
   // children prop accepts any ReactNode; runtime is identical to JSX.
   const tree = React.createElement(
-    'html',
-    { lang: 'en', suppressHydrationWarning: true },
+    "html",
+    { lang: "en", suppressHydrationWarning: true },
     React.createElement(
-      'body',
+      "body",
       {
         className: `${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`,
       },
       React.createElement(
         ThemeProvider,
         {
-          attribute: 'class',
-          defaultTheme: 'dark',
+          attribute: "class",
+          defaultTheme: "dark",
           enableSystem: true,
           disableTransitionOnChange: true,
         },
@@ -76,7 +76,7 @@ export default function RootLayout({
         React.createElement(Toaster, {
           richColors: true,
           closeButton: true,
-          position: 'top-right',
+          position: "top-right",
         }),
       ),
     ),

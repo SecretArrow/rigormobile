@@ -19,7 +19,7 @@
  * needed. React Native provides `fetch` globally too.
  */
 
-import { RPC_PORT } from '../protocol/constants';
+import { RPC_PORT } from "../protocol/constants";
 
 export interface RpcOptions {
   /** RPC URL, e.g. `http://127.0.0.1:8761`. */
@@ -47,7 +47,7 @@ export class RpcError extends Error {
   constructor(code: number, message: string) {
     super(`RPC ${code}: ${message}`);
     this.code = code;
-    this.name = 'RpcError';
+    this.name = "RpcError";
   }
 }
 
@@ -62,7 +62,7 @@ export class RigorRpcClient {
   private nextId = 1;
 
   constructor(opts: RpcOptions = {}) {
-    const port = opts.url ? '' : `:${RPC_PORT}`;
+    const port = opts.url ? "" : `:${RPC_PORT}`;
     this.url = opts.url ?? `http://127.0.0.1${port}`;
     this.username = opts.username;
     this.password = opts.password;
@@ -74,9 +74,9 @@ export class RigorRpcClient {
   /** Issue a single JSON-RPC call. */
   async call<T>(method: string, params: unknown[] = []): Promise<T> {
     const id = this.nextId++;
-    const body = JSON.stringify({ jsonrpc: '2.0', id, method, params });
+    const body = JSON.stringify({ jsonrpc: "2.0", id, method, params });
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...this.extraHeaders,
     };
     if (this.username && this.password) {
@@ -87,7 +87,7 @@ export class RigorRpcClient {
     const timer = setTimeout(() => ctrl.abort(), this.timeoutMs);
     try {
       const res = await this.fetchImpl(this.url, {
-        method: 'POST',
+        method: "POST",
         headers,
         body,
         signal: ctrl.signal,
@@ -115,30 +115,30 @@ export class RigorRpcClient {
       verificationprogress: number;
       chainwork: string;
       pruned: boolean;
-    }>('getblockchaininfo');
+    }>("getblockchaininfo");
   }
 
   getBlockTemplate(options?: { rules?: string[]; capabilities?: string[] }) {
-    return this.call<unknown>('getblocktemplate', [options ?? {}]);
+    return this.call<unknown>("getblocktemplate", [options ?? {}]);
   }
 
   submitBlock(blockHex: string) {
     return this.call<
       | null
-      | 'invalid'
-      | 'invalid-cb-found'
-      | 'invalid-chain-locked'
-      | 'invalid-prior-block'
-      | 'unknown-error'
-    >('submitblock', [blockHex]);
+      | "invalid"
+      | "invalid-cb-found"
+      | "invalid-chain-locked"
+      | "invalid-prior-block"
+      | "unknown-error"
+    >("submitblock", [blockHex]);
   }
 
   getBlock(hashOrHeight: string | number, verbosity = 1) {
-    return this.call<unknown>('getblock', [hashOrHeight, verbosity]);
+    return this.call<unknown>("getblock", [hashOrHeight, verbosity]);
   }
 
   getBlockHash(height: number) {
-    return this.call<string>('getblockhash', [height]);
+    return this.call<string>("getblockhash", [height]);
   }
 
   getMiningInfo() {
@@ -151,25 +151,25 @@ export class RigorRpcClient {
       pooledtx: number;
       chain: string;
       warnings: string;
-    }>('getmininginfo');
+    }>("getmininginfo");
   }
 
   // --- Wallet methods ---
 
   getNewAddress(label?: string) {
-    return this.call<string>('getnewaddress', label ? [label] : []);
+    return this.call<string>("getnewaddress", label ? [label] : []);
   }
 
   getBalance() {
-    return this.call<number>('getbalance');
+    return this.call<number>("getbalance");
   }
 
   sendToAddress(address: string, amount: number, comment?: string) {
-    return this.call<string>('sendtoaddress', [
+    return this.call<string>("sendtoaddress", [
       address,
       amount,
-      comment ?? '',
-      '',
+      comment ?? "",
+      "",
     ]);
   }
 
@@ -183,11 +183,11 @@ export class RigorRpcClient {
         confirmations: number;
         spendable: boolean;
       }>
-    >('listunspent', [minConf, maxConf]);
+    >("listunspent", [minConf, maxConf]);
   }
 
   validateAddress(address: string) {
-    return this.call<{ isvalid: boolean; address: string }>('validateaddress', [
+    return this.call<{ isvalid: boolean; address: string }>("validateaddress", [
       address,
     ]);
   }
@@ -196,11 +196,15 @@ export class RigorRpcClient {
 /** btoa that works in Node, browser, and RN. Falls back to a pure-JS
  *  implementation if neither `btoa` nor `Buffer` is available. */
 function btoaSafe(s: string): string {
-  if (typeof btoa === 'function') return btoa(s);
+  if (typeof btoa === "function") return btoa(s);
   // Node
-  const g = globalThis as unknown as { Buffer?: { from: (s: string, enc: string) => { toString: (enc: string) => string } } };
+  const g = globalThis as unknown as {
+    Buffer?: {
+      from: (s: string, enc: string) => { toString: (enc: string) => string };
+    };
+  };
   if (g.Buffer) {
-    return g.Buffer.from(s, 'utf-8').toString('base64');
+    return g.Buffer.from(s, "utf-8").toString("base64");
   }
   // Pure-JS fallback — small enough to inline.
   return base64Encode(s);
@@ -208,17 +212,18 @@ function btoaSafe(s: string): string {
 
 /** Pure-JS UTF-8 → base64 encoder (last-resort fallback). */
 function base64Encode(s: string): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   const bytes = new TextEncoder().encode(s);
-  let out = '';
+  let out = "";
   for (let i = 0; i < bytes.length; i += 3) {
     const b0 = bytes[i] ?? 0;
     const b1 = bytes[i + 1] ?? 0;
     const b2 = bytes[i + 2] ?? 0;
     const triple = (b0 << 16) | (b1 << 8) | b2;
     out += chars[(triple >> 18) & 63] + chars[(triple >> 12) & 63];
-    out += i + 1 < bytes.length ? chars[(triple >> 6) & 63] : '=';
-    out += i + 2 < bytes.length ? chars[triple & 63] : '=';
+    out += i + 1 < bytes.length ? chars[(triple >> 6) & 63] : "=";
+    out += i + 2 < bytes.length ? chars[triple & 63] : "=";
   }
   return out;
 }

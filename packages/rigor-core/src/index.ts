@@ -21,8 +21,15 @@
  * `…/protocol`, `…/utils`) to keep bundle size minimal in the browser.
  */
 
-export * from './protocol/index';
-export * from './mining/index';
-export * from './rpc/index';
-export * from './wallet/index';
-export { formatHashRate, formatDuration, formatOru, delay, hasKey, randomHex } from './utils/index';
+export * from "./protocol/index";
+export * from "./mining/index";
+export * from "./rpc/index";
+export * from "./wallet/index";
+export {
+  formatHashRate,
+  formatDuration,
+  formatOru,
+  delay,
+  hasKey,
+  randomHex,
+} from "./utils/index";

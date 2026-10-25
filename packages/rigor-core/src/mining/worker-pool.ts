@@ -6,11 +6,11 @@
  * the bundler can resolve it correctly. The pool only needs the worker URL.
  */
 
-import { Miner, type MinerBackend, type MinerOptions } from './miner';
-import type { MiningJob, WorkerMessage } from './worker';
+import { Miner, type MinerBackend, type MinerOptions } from "./miner";
+import type { MiningJob, WorkerMessage } from "./worker";
 
 export class WorkerPoolMiner extends Miner {
-  readonly backend: MinerBackend = 'worker-pool';
+  readonly backend: MinerBackend = "worker-pool";
   readonly parallelism: number;
   private workers: Worker[] = [];
   private workerUrl: string | URL;
@@ -21,7 +21,7 @@ export class WorkerPoolMiner extends Miner {
     this.workerUrl = workerUrl;
     this.parallelism =
       options.workerCount ??
-      (typeof navigator !== 'undefined' && navigator.hardwareConcurrency
+      (typeof navigator !== "undefined" && navigator.hardwareConcurrency
         ? Math.max(1, Math.min(8, navigator.hardwareConcurrency - 1))
         : 2);
     this.chunkSize = options.chunkSize ?? 0x01000000; // 16M nonces per chunk
@@ -35,9 +35,11 @@ export class WorkerPoolMiner extends Miner {
 
     // Spawn workers
     for (let i = 0; i < this.parallelism; i++) {
-      const w = new Worker(this.workerUrl, { type: 'module' });
-      w.onmessage = (ev: MessageEvent<WorkerMessage>) => this.handleWorkerMessage(ev.data);
-      w.onerror = (e) => this.emit('error', { message: String(e.message ?? e) });
+      const w = new Worker(this.workerUrl, { type: "module" });
+      w.onmessage = (ev: MessageEvent<WorkerMessage>) =>
+        this.handleWorkerMessage(ev.data);
+      w.onerror = (e) =>
+        this.emit("error", { message: String(e.message ?? e) });
       this.workers.push(w);
     }
 
@@ -45,13 +47,10 @@ export class WorkerPoolMiner extends Miner {
     let nextStart = job.startNonce >>> 0;
     let workerIdx = 0;
     while (!this.stopped && nextStart !== job.endNonce) {
-      const end = Math.min(
-        job.endNonce,
-        (nextStart + this.chunkSize) >>> 0,
-      );
+      const end = Math.min(job.endNonce, (nextStart + this.chunkSize) >>> 0);
       const w = this.workers[workerIdx % this.workers.length]!;
       w.postMessage({
-        type: 'job',
+        type: "job",
         job: { ...job, startNonce: nextStart, endNonce: end },
       });
       workerIdx++;
@@ -61,19 +60,19 @@ export class WorkerPoolMiner extends Miner {
 
     // Wait for all workers to finish their current chunk
     await Promise.all(this.workers.map((w) => this.waitForWorker(w)));
-    this.emit('stopped', undefined);
+    this.emit("stopped", undefined);
     this.teardown();
   }
 
   private waitForWorker(w: Worker): Promise<void> {
     return new Promise((resolve) => {
       const handler = (ev: MessageEvent<WorkerMessage>) => {
-        if (ev.data.type === 'done') {
-          w.removeEventListener('message', handler);
+        if (ev.data.type === "done") {
+          w.removeEventListener("message", handler);
           resolve();
         }
       };
-      w.addEventListener('message', handler);
+      w.addEventListener("message", handler);
     });
   }
 

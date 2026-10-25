@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { motion } from 'framer-motion';
+import * as React from "react";
+import { motion } from "framer-motion";
 import {
   Wallet as WalletIcon,
   Plus,
@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   Trash2,
   KeyRound,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -25,12 +25,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -39,22 +39,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { useWallet } from '@/hooks/use-wallet';
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useWallet } from "@/hooks/use-wallet";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function WalletPanel() {
   const wallet = useWallet();
   const { state } = wallet;
 
-  if (state.status === 'unlocked' && state.wallet) {
+  if (state.status === "unlocked" && state.wallet) {
     return <UnlockedView />;
   }
 
@@ -69,7 +64,7 @@ export function WalletPanel() {
             RigorChain HD Wallet
           </CardTitle>
           <CardDescription>
-            BIP32 / BIP44 with custom coin type 8760 (RIGOR). Bech32 HRP{' '}
+            BIP32 / BIP44 with custom coin type 8760 (RIGOR). Bech32 HRP{" "}
             <code className="text-foreground">rg</code>. Private keys never
             leave this device.
           </CardDescription>
@@ -104,11 +99,11 @@ export function WalletPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue={state.status === 'locked' ? 'unlock' : 'create'}>
+          <Tabs defaultValue={state.status === "locked" ? "unlock" : "create"}>
             <TabsList className="grid grid-cols-3 w-full">
               <TabsTrigger value="create">New</TabsTrigger>
               <TabsTrigger value="import">Import</TabsTrigger>
-              <TabsTrigger value="unlock" disabled={state.status !== 'locked'}>
+              <TabsTrigger value="unlock" disabled={state.status !== "locked"}>
                 Unlock
               </TabsTrigger>
             </TabsList>
@@ -118,8 +113,8 @@ export function WalletPanel() {
               <CreateForm
                 onCreate={async (pwd) => {
                   const mnemonic = await wallet.createNew(pwd);
-                  toast.success('Wallet created', {
-                    description: 'Save your 24-word mnemonic somewhere safe.',
+                  toast.success("Wallet created", {
+                    description: "Save your 24-word mnemonic somewhere safe.",
                   });
                   return mnemonic;
                 }}
@@ -131,7 +126,7 @@ export function WalletPanel() {
               <ImportForm
                 onImport={async (mnemonic, pwd) => {
                   await wallet.importMnemonic(mnemonic, pwd);
-                  toast.success('Wallet imported');
+                  toast.success("Wallet imported");
                 }}
               />
             </TabsContent>
@@ -142,9 +137,9 @@ export function WalletPanel() {
                 onUnlock={async (pwd) => {
                   try {
                     await wallet.unlock(pwd);
-                    toast.success('Wallet unlocked');
+                    toast.success("Wallet unlocked");
                   } catch {
-                    toast.error('Wrong password');
+                    toast.error("Wrong password");
                   }
                 }}
               />
@@ -164,11 +159,11 @@ function UnlockedView() {
 
   const copy = (text: string, idx?: number) => {
     navigator.clipboard.writeText(text);
-    if (typeof idx === 'number') {
+    if (typeof idx === "number") {
       setCopiedIdx(idx);
       setTimeout(() => setCopiedIdx(null), 1500);
     }
-    toast.success('Copied to clipboard');
+    toast.success("Copied to clipboard");
   };
 
   return (
@@ -181,14 +176,18 @@ function UnlockedView() {
               <div>
                 <CardTitle className="text-base">Your addresses</CardTitle>
                 <CardDescription>
-                  First 10 derived addresses (BIP44{' '}
+                  First 10 derived addresses (BIP44{" "}
                   <code className="text-foreground/80">
                     m/44&apos;/8760&apos;/0&apos;/0/&lt;n&gt;
                   </code>
                   )
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={() => wallet.deriveMore(5)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => wallet.deriveMore(5)}
+              >
                 <Plus className="size-3.5" /> Derive more
               </Button>
             </div>
@@ -203,7 +202,7 @@ function UnlockedView() {
                 className="flex items-center gap-3 rounded-md border border-border/40 bg-background/40 px-3 py-2 hover:border-primary/40 hover:bg-primary/5 transition-colors"
               >
                 <Badge variant="outline" className="hash-mono">
-                  {i.toString().padStart(2, '0')}
+                  {i.toString().padStart(2, "0")}
                 </Badge>
                 <div className="flex-1 min-w-0">
                   <div className="hash-mono text-sm truncate">{a.address}</div>
@@ -242,8 +241,12 @@ function UnlockedView() {
                 onClick={() => setShowMnemonic((v) => !v)}
                 className="gap-1"
               >
-                {showMnemonic ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                {showMnemonic ? 'Hide' : 'Reveal'}
+                {showMnemonic ? (
+                  <EyeOff className="size-3.5" />
+                ) : (
+                  <Eye className="size-3.5" />
+                )}
+                {showMnemonic ? "Hide" : "Reveal"}
               </Button>
             </div>
             <CardDescription>
@@ -254,13 +257,13 @@ function UnlockedView() {
           <CardContent>
             {showMnemonic && state.mnemonic ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {state.mnemonic.split(' ').map((word, i) => (
+                {state.mnemonic.split(" ").map((word, i) => (
                   <div
                     key={i}
                     className="rounded-md border border-border/40 bg-background/60 px-2 py-1.5 text-xs hash-mono"
                   >
                     <span className="text-muted-foreground mr-1.5">
-                      {(i + 1).toString().padStart(2, '0')}
+                      {(i + 1).toString().padStart(2, "0")}
                     </span>
                     {word}
                   </div>
@@ -273,8 +276,13 @@ function UnlockedView() {
             )}
             <Separator className="my-3" />
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">xpub (safe to share)</span>
-              <code className="hash-mono text-[10px] max-w-[60%] truncate" title={state.wallet?.exportXpub()}>
+              <span className="text-muted-foreground">
+                xpub (safe to share)
+              </span>
+              <code
+                className="hash-mono text-[10px] max-w-[60%] truncate"
+                title={state.wallet?.exportXpub()}
+              >
                 {state.wallet?.exportXpub().slice(0, 32)}…
               </code>
             </div>
@@ -320,7 +328,7 @@ function UnlockedView() {
                     variant="destructive"
                     onClick={() => {
                       wallet.wipe();
-                      toast.success('Wallet wiped from this device');
+                      toast.success("Wallet wiped from this device");
                     }}
                   >
                     Wipe
@@ -355,19 +363,25 @@ function UnlockedView() {
   );
 }
 
-function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }) {
-  const [pwd, setPwd] = React.useState('');
-  const [pwd2, setPwd2] = React.useState('');
+function CreateForm({
+  onCreate,
+}: {
+  onCreate: (pwd: string) => Promise<string>;
+}) {
+  const [pwd, setPwd] = React.useState("");
+  const [pwd2, setPwd2] = React.useState("");
   const [mnemonic, setMnemonic] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
 
   const submit = async () => {
     if (pwd.length < 8) {
-      toast.error('Password too short', { description: 'Use at least 8 characters.' });
+      toast.error("Password too short", {
+        description: "Use at least 8 characters.",
+      });
       return;
     }
     if (pwd !== pwd2) {
-      toast.error('Passwords do not match');
+      toast.error("Passwords do not match");
       return;
     }
     setBusy(true);
@@ -385,10 +399,10 @@ function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }
         <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-xs">
           <strong className="text-primary">Save your 24-word mnemonic:</strong>
           <div className="mt-2 grid grid-cols-3 gap-1.5 hash-mono text-[11px]">
-            {mnemonic.split(' ').map((w, i) => (
+            {mnemonic.split(" ").map((w, i) => (
               <div key={i} className="bg-background/60 rounded px-1.5 py-1">
                 <span className="text-muted-foreground mr-1">
-                  {(i + 1).toString().padStart(2, '0')}
+                  {(i + 1).toString().padStart(2, "0")}
                 </span>
                 {w}
               </div>
@@ -401,7 +415,7 @@ function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }
           className="w-full"
           onClick={() => {
             navigator.clipboard.writeText(mnemonic);
-            toast.success('Mnemonic copied — store it safely!');
+            toast.success("Mnemonic copied — store it safely!");
           }}
         >
           <Download className="size-3.5" /> Copy mnemonic
@@ -413,7 +427,9 @@ function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor="new-pwd" className="text-xs">New password (min 8 chars)</Label>
+        <Label htmlFor="new-pwd" className="text-xs">
+          New password (min 8 chars)
+        </Label>
         <Input
           id="new-pwd"
           type="password"
@@ -423,7 +439,9 @@ function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }
         />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="new-pwd2" className="text-xs">Confirm password</Label>
+        <Label htmlFor="new-pwd2" className="text-xs">
+          Confirm password
+        </Label>
         <Input
           id="new-pwd2"
           type="password"
@@ -432,21 +450,27 @@ function CreateForm({ onCreate }: { onCreate: (pwd: string) => Promise<string> }
         />
       </div>
       <Button className="w-full" onClick={submit} disabled={busy}>
-        {busy ? 'Creating…' : 'Create wallet'}
+        {busy ? "Creating…" : "Create wallet"}
       </Button>
     </div>
   );
 }
 
-function ImportForm({ onImport }: { onImport: (mnemonic: string, pwd: string) => Promise<void> }) {
-  const [mnemonic, setMnemonic] = React.useState('');
-  const [pwd, setPwd] = React.useState('');
+function ImportForm({
+  onImport,
+}: {
+  onImport: (mnemonic: string, pwd: string) => Promise<void>;
+}) {
+  const [mnemonic, setMnemonic] = React.useState("");
+  const [pwd, setPwd] = React.useState("");
   const [busy, setBusy] = React.useState(false);
 
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor="imp-mn" className="text-xs">BIP39 mnemonic (12 or 24 words)</Label>
+        <Label htmlFor="imp-mn" className="text-xs">
+          BIP39 mnemonic (12 or 24 words)
+        </Label>
         <textarea
           id="imp-mn"
           className="w-full min-h-[64px] rounded-md border border-input bg-background px-3 py-2 text-xs hash-mono"
@@ -456,7 +480,9 @@ function ImportForm({ onImport }: { onImport: (mnemonic: string, pwd: string) =>
         />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="imp-pwd" className="text-xs">New encryption password</Label>
+        <Label htmlFor="imp-pwd" className="text-xs">
+          New encryption password
+        </Label>
         <Input
           id="imp-pwd"
           type="password"
@@ -476,26 +502,32 @@ function ImportForm({ onImport }: { onImport: (mnemonic: string, pwd: string) =>
           }
         }}
       >
-        <Upload className="size-3.5" /> {busy ? 'Importing…' : 'Import wallet'}
+        <Upload className="size-3.5" /> {busy ? "Importing…" : "Import wallet"}
       </Button>
     </div>
   );
 }
 
-function UnlockForm({ onUnlock }: { onUnlock: (pwd: string) => Promise<void> }) {
-  const [pwd, setPwd] = React.useState('');
+function UnlockForm({
+  onUnlock,
+}: {
+  onUnlock: (pwd: string) => Promise<void>;
+}) {
+  const [pwd, setPwd] = React.useState("");
   const [busy, setBusy] = React.useState(false);
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <Label htmlFor="unl-pwd" className="text-xs">Password</Label>
+        <Label htmlFor="unl-pwd" className="text-xs">
+          Password
+        </Label>
         <Input
           id="unl-pwd"
           type="password"
           value={pwd}
           onChange={(e) => setPwd(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               setBusy(true);
               onUnlock(pwd).finally(() => setBusy(false));
             }
@@ -511,7 +543,7 @@ function UnlockForm({ onUnlock }: { onUnlock: (pwd: string) => Promise<void> }) 
           onUnlock(pwd).finally(() => setBusy(false));
         }}
       >
-        <Unlock className="size-4" /> {busy ? 'Unlocking…' : 'Unlock'}
+        <Unlock className="size-4" /> {busy ? "Unlocking…" : "Unlock"}
       </Button>
     </div>
   );

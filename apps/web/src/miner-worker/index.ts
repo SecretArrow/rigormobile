@@ -7,15 +7,19 @@
 
 /// <reference lib="webworker" />
 
-import { runJob, type MiningJob, type WorkerMessage } from '@rigormobile/rigor-core/mining';
+import {
+  runJob,
+  type MiningJob,
+  type WorkerMessage,
+} from "@rigormobile/rigor-core/mining";
 
 interface InboundJob {
-  type: 'job';
+  type: "job";
   job: MiningJob;
 }
 
 interface InboundStop {
-  type: 'stop';
+  type: "stop";
 }
 
 type Inbound = InboundJob | InboundStop;
@@ -24,12 +28,12 @@ let stopped = false;
 
 self.onmessage = (ev: MessageEvent<Inbound>) => {
   const msg = ev.data;
-  if (!msg || typeof msg !== 'object') return;
-  if (msg.type === 'stop') {
+  if (!msg || typeof msg !== "object") return;
+  if (msg.type === "stop") {
     stopped = true;
     return;
   }
-  if (msg.type === 'job') {
+  if (msg.type === "job") {
     stopped = false;
     runJob(
       msg.job,

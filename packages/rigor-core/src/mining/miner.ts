@@ -8,9 +8,9 @@
  * `navigator` (Node, RN), only the `cpu` backend is available.
  */
 
-import type { MiningJob, WorkerMessage } from './worker';
+import type { MiningJob, WorkerMessage } from "./worker";
 
-export type MinerBackend = 'webgpu' | 'worker-pool' | 'cpu';
+export type MinerBackend = "webgpu" | "worker-pool" | "cpu";
 
 export interface MinerOptions {
   /** Preferred backend. If unavailable, falls back to the next in the list. */
@@ -77,13 +77,13 @@ export class TypedEmitter<M extends object> {
  * Order: WebGPU → Worker pool → single-thread CPU.
  */
 export function detectBackend(): MinerBackend {
-  if (typeof navigator !== 'undefined' && 'gpu' in navigator) {
-    return 'webgpu';
+  if (typeof navigator !== "undefined" && "gpu" in navigator) {
+    return "webgpu";
   }
-  if (typeof Worker !== 'undefined') {
-    return 'worker-pool';
+  if (typeof Worker !== "undefined") {
+    return "worker-pool";
   }
-  return 'cpu';
+  return "cpu";
 }
 
 /**
@@ -110,10 +110,10 @@ export abstract class Miner extends TypedEmitter<MinerEventMap> {
   }
 
   protected handleWorkerMessage = (msg: WorkerMessage): void => {
-    if (msg.type === 'stats') {
+    if (msg.type === "stats") {
       this.hashes = msg.hashes;
       this.lastNonce = msg.lastNonce;
-      this.emit('stats', {
+      this.emit("stats", {
         hashes: this.hashes,
         hashesPerSecond: msg.hashesPerSecond,
         backend: this.backend,
@@ -121,15 +121,15 @@ export abstract class Miner extends TypedEmitter<MinerEventMap> {
         lastNonce: this.lastNonce,
         elapsedMs: Date.now() - this.startMs,
       });
-    } else if (msg.type === 'solution') {
-      this.emit('solution', {
+    } else if (msg.type === "solution") {
+      this.emit("solution", {
         jobId: msg.jobId,
         nonce: msg.nonce,
         header: msg.header,
         digest: msg.digest,
       });
-    } else if (msg.type === 'error') {
-      this.emit('error', { message: msg.message });
+    } else if (msg.type === "error") {
+      this.emit("error", { message: msg.message });
     }
   };
 }

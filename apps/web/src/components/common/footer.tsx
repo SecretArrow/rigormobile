@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Zap, ShieldCheck, GitBranch, Cpu } from 'lucide-react';
+import { Zap, ShieldCheck, GitBranch, Cpu } from "lucide-react";
 
 export function Footer() {
   return (
@@ -12,8 +12,8 @@ export function Footer() {
               R
             </div>
             <span>
-              <strong className="text-foreground">RigorMobile</strong> v0.1.0 · MIT
-              License
+              <strong className="text-foreground">RigorMobile</strong> v0.1.0 ·
+              MIT License
             </span>
           </div>
 

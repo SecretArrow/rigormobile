@@ -17,7 +17,7 @@
  */
 
 /** ASCII tag prepended to the 80-byte header before SHA3-256 hashing. */
-export const RGR_POW_TAG = 'RGRPOW01';
+export const RGR_POW_TAG = "RGRPOW01";
 
 /** Raw 8-byte UTF-8 encoding of {@link RGR_POW_TAG}. */
 export const RGR_POW_TAG_BYTES = new Uint8Array(
@@ -28,10 +28,10 @@ export const RGR_POW_TAG_BYTES = new Uint8Array(
 export const MAGIC_BYTES = new Uint8Array([0xce, 0xf1, 0xdb, 0xfa]);
 
 /** Chain identifier used in RPC `getblockchaininfo`. */
-export const CHAIN_NAME = 'RIGOR';
+export const CHAIN_NAME = "RIGOR";
 
 /** Mainnet Bech32 Human-Readable Part (HRP) for SegWit-style addresses. */
-export const BECH32_HRP = 'rg';
+export const BECH32_HRP = "rg";
 
 /** Default P2P port (peer-to-peer block/tx relay). */
 export const P2P_PORT = 8760;
@@ -41,7 +41,7 @@ export const RPC_PORT = 8761;
 
 /** Mainnet genesis block hash (little-endian hex as returned by RPC). */
 export const GENESIS_HASH =
-  'e2ce92cfef740f92e8cc84a8541d8e760c776c668afd9b61740b3a4315241468';
+  "e2ce92cfef740f92e8cc84a8541d8e760c776c668afd9b61740b3a4315241468";
 
 /** Block header size in bytes (Bitcoin-compatible: 80). */
 export const HEADER_SIZE = 80;
@@ -147,9 +147,7 @@ export function encodeCompact(target: Uint8Array): number {
     // Take the top 3 bytes of the most-significant non-zero portion
     const base = target.length - size;
     mantissa =
-      (target[base] << 16) |
-      (target[base + 1] << 8) |
-      target[base + 2];
+      (target[base] << 16) | (target[base + 1] << 8) | target[base + 2];
     exponent = size;
   }
 

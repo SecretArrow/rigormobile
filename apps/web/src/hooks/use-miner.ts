@@ -8,9 +8,9 @@
  * `submitblock`.
  */
 
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   detectBackend,
   Miner,
@@ -21,13 +21,13 @@ import {
   templateToJob,
   type BlockTemplate,
   type MinerStats,
-} from '@rigormobile/rigor-core/mining';
-import { RigorRpcClient } from '@rigormobile/rigor-core/rpc';
-import { formatHashRate, formatDuration } from '@rigormobile/rigor-core/utils';
+} from "@rigormobile/rigor-core/mining";
+import { RigorRpcClient } from "@rigormobile/rigor-core/rpc";
+import { formatHashRate, formatDuration } from "@rigormobile/rigor-core/utils";
 
 export interface MinerState {
-  status: 'idle' | 'starting' | 'running' | 'stopping' | 'error';
-  backend: 'webgpu' | 'worker-pool' | 'cpu' | 'unknown';
+  status: "idle" | "starting" | "running" | "stopping" | "error";
+  backend: "webgpu" | "worker-pool" | "cpu" | "unknown";
   parallelism: number;
   hashes: number;
   hashesPerSecond: number;
@@ -42,14 +42,14 @@ export interface MinerState {
 }
 
 const INITIAL_STATE: MinerState = {
-  status: 'idle',
-  backend: 'unknown',
+  status: "idle",
+  backend: "unknown",
   parallelism: 0,
   hashes: 0,
   hashesPerSecond: 0,
   elapsedMs: 0,
   lastNonce: 0,
-  lastDigest: '',
+  lastDigest: "",
   solutionsFound: 0,
   lastSolutionAt: null,
   blockHeight: null,
@@ -61,7 +61,7 @@ export interface UseMinerOptions {
   rpcUrl?: string;
   rpcUsername?: string;
   rpcPassword?: string;
-  preferredBackend?: 'webgpu' | 'worker-pool' | 'cpu';
+  preferredBackend?: "webgpu" | "worker-pool" | "cpu";
   autoStart?: boolean;
   /** Refresh block template every N seconds (default 60). */
   refreshIntervalSec?: number;
@@ -89,20 +89,26 @@ export function useMiner(options: UseMinerOptions = {}) {
   const initMiner = React.useCallback(async () => {
     if (minerRef.current) return minerRef.current;
     let backend = options.preferredBackend ?? detectBackend();
-    if (backend === 'webgpu' && !(await isWebGpuAvailable())) {
-      backend = 'worker-pool';
+    if (backend === "webgpu" && !(await isWebGpuAvailable())) {
+      backend = "worker-pool";
     }
     let miner: Miner;
-    if (backend === 'webgpu') {
+    if (backend === "webgpu") {
       const m = new WebGpuMiner();
       const ok = await m.init();
-      miner = ok ? m : new WorkerPoolMiner(new URL('../miner-worker/index.ts', import.meta.url));
-    } else if (backend === 'worker-pool') {
-      miner = new WorkerPoolMiner(new URL('../miner-worker/index.ts', import.meta.url));
+      miner = ok
+        ? m
+        : new WorkerPoolMiner(
+            new URL("../miner-worker/index.ts", import.meta.url),
+          );
+    } else if (backend === "worker-pool") {
+      miner = new WorkerPoolMiner(
+        new URL("../miner-worker/index.ts", import.meta.url),
+      );
     } else {
       miner = new CpuMiner();
     }
-    miner.on('stats', (s) => {
+    miner.on("stats", (s) => {
       setState((prev) => ({
         ...prev,
         hashes: s.hashes,
@@ -115,36 +121,40 @@ export function useMiner(options: UseMinerOptions = {}) {
       statsBufferRef.current.push(s);
       if (statsBufferRef.current.length > 60) statsBufferRef.current.shift();
     });
-    miner.on('solution', (sol) => {
+    miner.on("solution", (sol) => {
       setState((prev) => ({
         ...prev,
         solutionsFound: prev.solutionsFound + 1,
         lastSolutionAt: Date.now(),
         lastDigest: Array.from(sol.digest)
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join(''),
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join(""),
       }));
       // Best-effort submit back to the node
       if (rpcRef.current) {
         rpcRef.current
           .submitBlock(
             Array.from(sol.header)
-              .map((b) => b.toString(16).padStart(2, '0'))
-              .join(''),
+              .map((b) => b.toString(16).padStart(2, "0"))
+              .join(""),
           )
           .then((res) => {
             if (res !== null) {
-              console.warn('submitblock rejected:', res);
+              console.warn("submitblock rejected:", res);
             }
           })
-          .catch((err) => console.warn('submitblock error:', err));
+          .catch((err) => console.warn("submitblock error:", err));
       }
     });
-    miner.on('error', (err) => {
-      setState((prev) => ({ ...prev, status: 'error', errorMessage: err.message }));
+    miner.on("error", (err) => {
+      setState((prev) => ({
+        ...prev,
+        status: "error",
+        errorMessage: err.message,
+      }));
     });
-    miner.on('stopped', () => {
-      setState((prev) => ({ ...prev, status: 'idle' }));
+    miner.on("stopped", () => {
+      setState((prev) => ({ ...prev, status: "idle" }));
     });
     minerRef.current = miner;
     return miner;
@@ -172,7 +182,7 @@ export function useMiner(options: UseMinerOptions = {}) {
   }, []);
 
   const start = React.useCallback(async () => {
-    setState((prev) => ({ ...prev, status: 'starting', errorMessage: null }));
+    setState((prev) => ({ ...prev, status: "starting", errorMessage: null }));
     const miner = await initMiner();
     let tpl = currentTemplateRef.current;
     if (!tpl) {
@@ -184,12 +194,12 @@ export function useMiner(options: UseMinerOptions = {}) {
       tpl = makeDemoTemplate();
     }
     const job = templateToJob(tpl, { jobId: `job-${Date.now()}` });
-    setState((prev) => ({ ...prev, status: 'running' }));
+    setState((prev) => ({ ...prev, status: "running" }));
     await miner.start(job);
   }, [initMiner, refreshTemplate]);
 
   const stop = React.useCallback(() => {
-    setState((prev) => ({ ...prev, status: 'stopping' }));
+    setState((prev) => ({ ...prev, status: "stopping" }));
     minerRef.current?.stop();
   }, []);
 
@@ -223,14 +233,14 @@ function makeDemoTemplate(): BlockTemplate {
   return {
     version: 0x20000000,
     previousblockhash:
-      'e2ce92cfef740f92e8cc84a8541d8e760c776c668afd9b61740b3a4315241468',
+      "e2ce92cfef740f92e8cc84a8541d8e760c776c668afd9b61740b3a4315241468",
     transactions: [],
     coinbasetxn: {
-      data: '',
-      txid: '0000000000000000000000000000000000000000000000000000000000000000',
+      data: "",
+      txid: "0000000000000000000000000000000000000000000000000000000000000000",
     },
     coinbasevalue: 128 * 1e8,
-    bits: '207fffff', // very easy target — finds shares quickly for demo
+    bits: "207fffff", // very easy target — finds shares quickly for demo
     curtime: Math.floor(Date.now() / 1000),
     height: 1,
     _id: `demo-${Date.now()}`,

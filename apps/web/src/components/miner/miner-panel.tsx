@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
   Square,
@@ -14,7 +14,7 @@ import {
   AlertCircle,
   Settings2,
   CheckCircle2,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -22,30 +22,30 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useMiner } from '@/hooks/use-miner';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/tooltip";
+import { useMiner } from "@/hooks/use-miner";
+import { cn } from "@/lib/utils";
 
 interface MinerPanelProps {
   onHashRate?: (hps: number) => void;
 }
 
 export function MinerPanel({ onHashRate }: MinerPanelProps) {
-  const [rpcUrl, setRpcUrl] = React.useState('');
-  const [rpcUser, setRpcUser] = React.useState('');
-  const [rpcPass, setRpcPass] = React.useState('');
+  const [rpcUrl, setRpcUrl] = React.useState("");
+  const [rpcUser, setRpcUser] = React.useState("");
+  const [rpcPass, setRpcPass] = React.useState("");
   const [showAdvanced, setShowAdvanced] = React.useState(false);
 
   const miner = useMiner({
@@ -59,8 +59,8 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
     onHashRate?.(miner.state.hashesPerSecond);
   }, [miner.state.hashesPerSecond, onHashRate]);
 
-  const running = miner.state.status === 'running';
-  const starting = miner.state.status === 'starting';
+  const running = miner.state.status === "running";
+  const starting = miner.state.status === "starting";
 
   const utilization = Math.min(
     100,
@@ -86,18 +86,15 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
                 </CardDescription>
               </div>
               <Badge
-                variant={running ? 'default' : 'secondary'}
-                className={cn(
-                  'gap-1.5 capitalize',
-                  running && 'glow-emerald',
-                )}
+                variant={running ? "default" : "secondary"}
+                className={cn("gap-1.5 capitalize", running && "glow-emerald")}
               >
                 <span
                   className={cn(
-                    'size-2 rounded-full',
+                    "size-2 rounded-full",
                     running
-                      ? 'bg-primary-foreground animate-rigor-pulse'
-                      : 'bg-muted-foreground',
+                      ? "bg-primary-foreground animate-rigor-pulse"
+                      : "bg-muted-foreground",
                   )}
                 />
                 {miner.state.status}
@@ -110,19 +107,25 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
             <div className="space-y-1">
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl sm:text-6xl font-bold tracking-tighter hash-mono tabular-nums">
-                  {miner.formatHashRate(miner.state.hashesPerSecond).split(' ')[0]}
+                  {
+                    miner
+                      .formatHashRate(miner.state.hashesPerSecond)
+                      .split(" ")[0]
+                  }
                 </span>
                 <span className="text-2xl font-semibold text-muted-foreground">
-                  {miner.formatHashRate(miner.state.hashesPerSecond).split(' ')[1] ?? 'H/s'}
+                  {miner
+                    .formatHashRate(miner.state.hashesPerSecond)
+                    .split(" ")[1] ?? "H/s"}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Total hashes:{' '}
+                Total hashes:{" "}
                 <span className="hash-mono text-foreground/80">
                   {miner.state.hashes.toLocaleString()}
                 </span>
                 <span className="mx-2">·</span>
-                Elapsed:{' '}
+                Elapsed:{" "}
                 <span className="hash-mono text-foreground/80">
                   {miner.formatDuration(miner.state.elapsedMs)}
                 </span>
@@ -140,7 +143,11 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
 
             {/* Backend info */}
             <div className="grid grid-cols-3 gap-3 text-xs">
-              <Stat label="Backend" value={miner.state.backend} icon={<Zap className="size-3" />} />
+              <Stat
+                label="Backend"
+                value={miner.state.backend}
+                icon={<Zap className="size-3" />}
+              />
               <Stat
                 label="Parallelism"
                 value={`${miner.state.parallelism}×`}
@@ -162,7 +169,7 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
               className="gap-2 glow-emerald"
             >
               <Play className="size-4" />
-              {starting ? 'Starting…' : running ? 'Mining' : 'Start mining'}
+              {starting ? "Starting…" : running ? "Mining" : "Start mining"}
             </Button>
             <Button
               size="lg"
@@ -198,13 +205,14 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
             </CardHeader>
             <CardContent>
               <div className="hash-mono text-xs text-muted-foreground break-all min-h-[3rem]">
-                {miner.state.lastDigest || '—'}
+                {miner.state.lastDigest || "—"}
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Last nonce</span>
                 <span className="hash-mono">
-                  0x{(miner.state.lastNonce >>> 0).toString(16).padStart(8, '0')}
+                  0x
+                  {(miner.state.lastNonce >>> 0).toString(16).padStart(8, "0")}
                 </span>
               </div>
             </CardContent>
@@ -251,7 +259,7 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
                 size="sm"
                 onClick={() => setShowAdvanced((v) => !v)}
               >
-                {showAdvanced ? 'Hide' : 'Advanced'}
+                {showAdvanced ? "Hide" : "Advanced"}
               </Button>
             </CardTitle>
             <CardDescription>
@@ -261,7 +269,9 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1">
-              <Label htmlFor="rpc-url" className="text-xs">RPC URL</Label>
+              <Label htmlFor="rpc-url" className="text-xs">
+                RPC URL
+              </Label>
               <Input
                 id="rpc-url"
                 placeholder="http://127.0.0.1:8761"
@@ -274,12 +284,14 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
               {showAdvanced && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
+                  animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   className="space-y-3 overflow-hidden"
                 >
                   <div className="space-y-1">
-                    <Label htmlFor="rpc-user" className="text-xs">RPC username</Label>
+                    <Label htmlFor="rpc-user" className="text-xs">
+                      RPC username
+                    </Label>
                     <Input
                       id="rpc-user"
                       placeholder="rigor"
@@ -288,7 +300,9 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="rpc-pass" className="text-xs">RPC password</Label>
+                    <Label htmlFor="rpc-pass" className="text-xs">
+                      RPC password
+                    </Label>
                     <Input
                       id="rpc-pass"
                       type="password"
@@ -304,12 +318,12 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
             <div className="space-y-2 pt-1">
               <Stat
                 label="Block height"
-                value={miner.state.blockHeight?.toString() ?? '—'}
+                value={miner.state.blockHeight?.toString() ?? "—"}
                 compact
               />
               <Stat
                 label="Bits (target)"
-                value={miner.state.blockBits ?? '—'}
+                value={miner.state.blockBits ?? "—"}
                 compact
               />
             </div>
@@ -326,7 +340,9 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
                 <AlertCircle className="size-4 shrink-0 mt-0.5" />
                 <div>
                   <div className="font-medium">RPC error</div>
-                  <div className="text-destructive/80">{miner.state.errorMessage}</div>
+                  <div className="text-destructive/80">
+                    {miner.state.errorMessage}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -335,7 +351,8 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
                 <div>
                   <div className="font-medium">Engine ready</div>
                   <div className="text-muted-foreground">
-                    Mining will use the <strong>{miner.state.backend || detectLabel()}</strong>{' '}
+                    Mining will use the{" "}
+                    <strong>{miner.state.backend || detectLabel()}</strong>{" "}
                     backend when started.
                   </div>
                 </div>
@@ -366,9 +383,9 @@ export function MinerPanel({ onHashRate }: MinerPanelProps) {
 }
 
 function detectLabel() {
-  if (typeof navigator !== 'undefined' && 'gpu' in navigator) return 'webgpu';
-  if (typeof Worker !== 'undefined') return 'worker-pool';
-  return 'cpu';
+  if (typeof navigator !== "undefined" && "gpu" in navigator) return "webgpu";
+  if (typeof Worker !== "undefined") return "worker-pool";
+  return "cpu";
 }
 
 function Stat({
@@ -385,8 +402,8 @@ function Stat({
   return (
     <div
       className={cn(
-        'flex items-center justify-between gap-2 rounded-md border border-border/40 bg-background/40 px-2.5 py-1.5',
-        compact && 'text-xs',
+        "flex items-center justify-between gap-2 rounded-md border border-border/40 bg-background/40 px-2.5 py-1.5",
+        compact && "text-xs",
       )}
     >
       <span className="text-muted-foreground inline-flex items-center gap-1.5">

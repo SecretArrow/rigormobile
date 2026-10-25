@@ -10,7 +10,7 @@
  *   offset 76 | 4  | nonce            (uint32, iterated by the miner)
  */
 
-import { HEADER_SIZE } from './constants';
+import { HEADER_SIZE } from "./constants";
 
 /** Parsed view of a RigorChain 80-byte block header. */
 export interface BlockHeader {
@@ -25,10 +25,14 @@ export interface BlockHeader {
 /** Strict 80-byte header serialization. */
 export function serializeHeader(h: BlockHeader): Uint8Array {
   if (h.prevBlockHash.length !== 32) {
-    throw new RangeError(`prevBlockHash must be 32 bytes, got ${h.prevBlockHash.length}`);
+    throw new RangeError(
+      `prevBlockHash must be 32 bytes, got ${h.prevBlockHash.length}`,
+    );
   }
   if (h.merkleRoot.length !== 32) {
-    throw new RangeError(`merkleRoot must be 32 bytes, got ${h.merkleRoot.length}`);
+    throw new RangeError(
+      `merkleRoot must be 32 bytes, got ${h.merkleRoot.length}`,
+    );
   }
   const out = new Uint8Array(HEADER_SIZE);
   const dv = new DataView(out.buffer);
@@ -44,7 +48,9 @@ export function serializeHeader(h: BlockHeader): Uint8Array {
 /** Reverse of {@link serializeHeader}. */
 export function deserializeHeader(bytes: Uint8Array): BlockHeader {
   if (bytes.length !== HEADER_SIZE) {
-    throw new RangeError(`header must be ${HEADER_SIZE} bytes, got ${bytes.length}`);
+    throw new RangeError(
+      `header must be ${HEADER_SIZE} bytes, got ${bytes.length}`,
+    );
   }
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   return {
@@ -63,7 +69,11 @@ export function setNonce(headerBytes: Uint8Array, nonce: number): void {
   if (headerBytes.length !== HEADER_SIZE) {
     throw new RangeError(`header must be ${HEADER_SIZE} bytes`);
   }
-  const dv = new DataView(headerBytes.buffer, headerBytes.byteOffset, headerBytes.byteLength);
+  const dv = new DataView(
+    headerBytes.buffer,
+    headerBytes.byteOffset,
+    headerBytes.byteLength,
+  );
   dv.setUint32(76, nonce >>> 0, true);
 }
 
@@ -73,6 +83,10 @@ export function setTimestamp(headerBytes: Uint8Array, timestamp: number): void {
   if (headerBytes.length !== HEADER_SIZE) {
     throw new RangeError(`header must be ${HEADER_SIZE} bytes`);
   }
-  const dv = new DataView(headerBytes.buffer, headerBytes.byteOffset, headerBytes.byteLength);
+  const dv = new DataView(
+    headerBytes.buffer,
+    headerBytes.byteOffset,
+    headerBytes.byteLength,
+  );
   dv.setUint32(68, timestamp >>> 0, true);
 }

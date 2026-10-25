@@ -23,18 +23,18 @@ rigormobile/
 TypeScript** with **no platform-specific imports** — no `node:fs`, no
 `window`, no `react-native`. It runs unchanged in:
 
-| Environment | Backend | Hashrate (typical) |
-|---|---|---|
-| Browser (Chrome 113+) | WebGPU compute shader | 5–50 MH/s on discrete GPU |
-| Browser (fallback) | Web Worker pool | 50–200 kH/s |
-| React Native (Android) | Native OpenCL (TODO) | 1–10 MH/s on Adreno/Mali |
-| React Native (fallback) | JS single-thread | 30–80 kH/s |
-| Node 20+ | Worker threads (TODO) | 100–300 kH/s |
+| Environment             | Backend               | Hashrate (typical)        |
+| ----------------------- | --------------------- | ------------------------- |
+| Browser (Chrome 113+)   | WebGPU compute shader | 5–50 MH/s on discrete GPU |
+| Browser (fallback)      | Web Worker pool       | 50–200 kH/s               |
+| React Native (Android)  | Native OpenCL (TODO)  | 1–10 MH/s on Adreno/Mali  |
+| React Native (fallback) | JS single-thread      | 30–80 kH/s                |
+| Node 20+                | Worker threads (TODO) | 100–300 kH/s              |
 
 The mining kernel itself is **identical** across all platforms:
 
 ```typescript
-digest = SHA3-256("RGRPOW01" || header_80)
+digest = SHA3 - 256("RGRPOW01" || header_80);
 // Block is valid if digest < target(bits)
 ```
 
@@ -51,13 +51,13 @@ See [`MINING.md`](./MINING.md) for the full pipeline.
 
 ## CI/CD strategy
 
-| Workflow | When | What | Avg time |
-|---|---|---|---|
-| `ci.yml` | every push/PR | bun install + lint + typecheck + unit | 1.5–3 min |
-| `e2e.yml` | push to main, PRs | Playwright against prod Next build | 2–5 min |
-| `auto-fix.yml` | push to main | prettier + eslint --fix, commit if changed | 0.5–1 min |
-| `build-apk.yml` | push to main, tag `v*` | Expo prebuild + Gradle assembleRelease | 3–9 min |
-| `release.yml` | tag `v*` | cross-link APK to GitHub Release | 10 s |
+| Workflow        | When                   | What                                       | Avg time  |
+| --------------- | ---------------------- | ------------------------------------------ | --------- |
+| `ci.yml`        | every push/PR          | bun install + lint + typecheck + unit      | 1.5–3 min |
+| `e2e.yml`       | push to main, PRs      | Playwright against prod Next build         | 2–5 min   |
+| `auto-fix.yml`  | push to main           | prettier + eslint --fix, commit if changed | 0.5–1 min |
+| `build-apk.yml` | push to main, tag `v*` | Expo prebuild + Gradle assembleRelease     | 3–9 min   |
+| `release.yml`   | tag `v*`               | cross-link APK to GitHub Release           | 10 s      |
 
 Total wall-clock time for a `git push` to main: ~3 min (CI + auto-fix run in
 parallel; APK build kicks off separately). The user never waits on local

@@ -1,9 +1,9 @@
-export * from './bech32';
-export * from './hd';
-export * from './storage';
+export * from "./bech32";
+export * from "./hd";
+export * from "./storage";
 
-import { generateMnemonic as _generateMnemonic } from '@scure/bip39';
-import { wordlist as englishWordlist } from '@scure/bip39/wordlists/english';
+import { generateMnemonic as _generateMnemonic } from "@scure/bip39";
+import { wordlist as englishWordlist } from "@scure/bip39/wordlists/english";
 
 /**
  * Generate a BIP39 mnemonic with the English wordlist pre-loaded.

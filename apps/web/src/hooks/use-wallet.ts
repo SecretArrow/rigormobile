@@ -7,9 +7,9 @@
  * clear the in-memory key.
  */
 
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   RigorHdWallet,
   type DerivedAddress,
@@ -17,12 +17,12 @@ import {
   decryptWallet,
   type EncryptedWallet,
   generateMnemonic,
-} from '@rigormobile/rigor-core/wallet';
+} from "@rigormobile/rigor-core/wallet";
 
-const STORAGE_KEY = 'rigormobile.wallet.v1';
+const STORAGE_KEY = "rigormobile.wallet.v1";
 
 export interface WalletState {
-  status: 'none' | 'locked' | 'unlocked' | 'creating' | 'error';
+  status: "none" | "locked" | "unlocked" | "creating" | "error";
   mnemonic?: string;
   wallet?: RigorHdWallet;
   addresses: DerivedAddress[];
@@ -31,7 +31,7 @@ export interface WalletState {
 }
 
 const INITIAL: WalletState = {
-  status: 'none',
+  status: "none",
   addresses: [],
   errorMessage: null,
 };
@@ -45,15 +45,20 @@ export function useWallet() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const encrypted = JSON.parse(raw) as EncryptedWallet;
-        setState({ status: 'locked', encrypted, addresses: [], errorMessage: null });
+        setState({
+          status: "locked",
+          encrypted,
+          addresses: [],
+          errorMessage: null,
+        });
       }
     } catch (err) {
-      console.warn('failed to read wallet from storage', err);
+      console.warn("failed to read wallet from storage", err);
     }
   }, []);
 
   const createNew = React.useCallback(async (password: string) => {
-    setState((prev) => ({ ...prev, status: 'creating' }));
+    setState((prev) => ({ ...prev, status: "creating" }));
     try {
       const mnemonic = generateMnemonic(256); // 24 words
       const wallet = RigorHdWallet.fromMnemonic(mnemonic);
@@ -61,7 +66,7 @@ export function useWallet() {
       const encrypted = await encryptWallet(wallet.exportXprv(), password);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
       setState({
-        status: 'unlocked',
+        status: "unlocked",
         mnemonic,
         wallet,
         addresses,
@@ -72,7 +77,7 @@ export function useWallet() {
     } catch (err) {
       setState((prev) => ({
         ...prev,
-        status: 'error',
+        status: "error",
         errorMessage: err instanceof Error ? err.message : String(err),
       }));
       throw err;
@@ -81,14 +86,14 @@ export function useWallet() {
 
   const importMnemonic = React.useCallback(
     async (mnemonic: string, password: string) => {
-      setState((prev) => ({ ...prev, status: 'creating' }));
+      setState((prev) => ({ ...prev, status: "creating" }));
       try {
         const wallet = RigorHdWallet.fromMnemonic(mnemonic);
         const addresses = wallet.deriveAddressBatch(10);
         const encrypted = await encryptWallet(wallet.exportXprv(), password);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
         setState({
-          status: 'unlocked',
+          status: "unlocked",
           mnemonic,
           wallet,
           addresses,
@@ -98,7 +103,7 @@ export function useWallet() {
       } catch (err) {
         setState((prev) => ({
           ...prev,
-          status: 'error',
+          status: "error",
           errorMessage: err instanceof Error ? err.message : String(err),
         }));
         throw err;
@@ -107,37 +112,40 @@ export function useWallet() {
     [],
   );
 
-  const unlock = React.useCallback(async (password: string) => {
-    setState((prev) => {
-      if (!prev.encrypted) return prev;
-      return { ...prev, status: 'creating' };
-    });
-    try {
-      const encrypted = state.encrypted;
-      if (!encrypted) throw new Error('no sealed wallet found');
-      const xprv = await decryptWallet(encrypted, password);
-      const wallet = RigorHdWallet.fromSeed(xprv);
-      const addresses = wallet.deriveAddressBatch(10);
-      setState({
-        status: 'unlocked',
-        wallet,
-        addresses,
-        encrypted,
-        errorMessage: null,
+  const unlock = React.useCallback(
+    async (password: string) => {
+      setState((prev) => {
+        if (!prev.encrypted) return prev;
+        return { ...prev, status: "creating" };
       });
-    } catch (err) {
-      setState((prev) => ({
-        ...prev,
-        status: 'error',
-        errorMessage: err instanceof Error ? err.message : String(err),
-      }));
-      throw err;
-    }
-  }, [state.encrypted]);
+      try {
+        const encrypted = state.encrypted;
+        if (!encrypted) throw new Error("no sealed wallet found");
+        const xprv = await decryptWallet(encrypted, password);
+        const wallet = RigorHdWallet.fromSeed(xprv);
+        const addresses = wallet.deriveAddressBatch(10);
+        setState({
+          status: "unlocked",
+          wallet,
+          addresses,
+          encrypted,
+          errorMessage: null,
+        });
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          status: "error",
+          errorMessage: err instanceof Error ? err.message : String(err),
+        }));
+        throw err;
+      }
+    },
+    [state.encrypted],
+  );
 
   const lock = React.useCallback(() => {
     setState((prev) => ({
-      status: prev.encrypted ? 'locked' : 'none',
+      status: prev.encrypted ? "locked" : "none",
       encrypted: prev.encrypted,
       addresses: [],
       errorMessage: null,

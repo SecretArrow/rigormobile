@@ -1,6 +1,6 @@
 /** Tiny platform-agnostic helpers used throughout the package. */
 
-export { bytesToHex, hexToBytes } from '../wallet/hd';
+export { bytesToHex, hexToBytes } from "../wallet/hd";
 
 /** Format a hash-rate (H/s) as a human-friendly string. */
 export function formatHashRate(hps: number): string {
@@ -16,14 +16,14 @@ export function formatDuration(ms: number): string {
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
-  return [h, m, s].map((n) => n.toString().padStart(2, '0')).join(':');
+  return [h, m, s].map((n) => n.toString().padStart(2, "0")).join(":");
 }
 
 /** Convert an amount of ORU (integer base units) to a display string. */
 export function formatOru(satoshis: number): string {
   const whole = Math.floor(satoshis / 1e8);
   const frac = satoshis % 1e8;
-  return `${whole}.${frac.toString().padStart(8, '0')} ORU`;
+  return `${whole}.${frac.toString().padStart(8, "0")} ORU`;
 }
 
 /** Promise-based delay. */
@@ -39,9 +39,9 @@ export function hasKey<T extends object>(obj: T, key: PropertyKey): boolean {
 /** Generate a random hex string of `bytes` bytes. */
 export function randomHex(bytes: number): string {
   const arr = crypto.getRandomValues(new Uint8Array(bytes));
-  let s = '';
+  let s = "";
   for (let i = 0; i < arr.length; i++) {
-    s += arr[i]!.toString(16).padStart(2, '0');
+    s += arr[i]!.toString(16).padStart(2, "0");
   }
   return s;
 }
