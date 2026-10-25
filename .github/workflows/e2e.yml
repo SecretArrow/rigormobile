@@ -34,7 +34,7 @@ jobs:
           bun-version: 1.3.14
 
       - name: Cache Bun store
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.bun/install/cache
@@ -48,7 +48,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-pw-${{ hashFiles('apps/web/package.json') }}
