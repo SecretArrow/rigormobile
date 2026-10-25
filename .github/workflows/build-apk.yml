@@ -97,14 +97,29 @@ jobs:
         working-directory: apps/android
         run: bunx expo prebuild --platform android --clean
 
-      - name: Decode keystore (if secret present)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      # Expose the keystore secret presence as a step-level env so we can
+      # branch on it later (secrets context cannot be used in step `if:`).
+      - name: Detect signing config
+        id: signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > apps/android/android/app/release.keystore
+          if [ -n "${KEYSTORE_BASE64}" ]; then
+            echo "signed=true" >> $GITHUB_OUTPUT
+          else
+            echo "signed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Decode keystore (if secret present)
+        if: steps.signing.outputs.signed == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "${KEYSTORE_BASE64}" | base64 -d > apps/android/android/app/release.keystore
           echo "Keystore deployed."
 
       - name: Configure signing props
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.signing.outputs.signed == 'true'
         working-directory: apps/android/android
         run: |
           cat >> app/build.gradle <<'EOF'
@@ -128,7 +143,7 @@ jobs:
           EOF
 
       - name: Gradle assembleRelease (signed)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.signing.outputs.signed == 'true'
         working-directory: apps/android/android
         env:
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -137,7 +152,7 @@ jobs:
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Gradle assembleRelease (debug-signed fallback)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 == '' }}
+        if: steps.signing.outputs.signed == 'false'
         working-directory: apps/android/android
         run: ./gradlew assembleRelease --no-daemon -Pandroid.injected.build.abi=arm64-v8a,armeabi-v7a,x86_64 --stacktrace
 
