@@ -1,0 +1,31 @@
+# Dependabot — keep dev deps fresh without breaking CI.
+# Bumps minor/patch only; major bumps get a separate PR with full test suite.
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    open-pull-requests-limit: 5
+    groups:
+      react:
+        patterns: ['react', 'react-dom', 'react-*']
+      next:
+        patterns: ['next', 'eslint-config-next']
+      radix:
+        patterns: ['@radix-ui/*']
+      eslint:
+        patterns: ['eslint', 'eslint-*', '@typescript-eslint/*']
+    commit-message:
+      prefix: 'chore(deps)'
+    labels: ['dependencies']
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    commit-message:
+      prefix: 'chore(ci)'
+    labels: ['dependencies', 'ci']

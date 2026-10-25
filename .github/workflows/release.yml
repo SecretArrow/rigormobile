@@ -1,0 +1,79 @@
+# RigorMobile — Release: tag-driven release with auto-changelog
+#
+# Triggers when a tag matching `v*` is pushed. Cross-links the APK built by
+# `build-apk.yml` (via the artifact name `rigormobile-<sha>`) and attaches
+# it to the GitHub Release. Also writes a changelog from commits since the
+# last tag.
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (must already exist)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.tag.outputs.name }}^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            LOGS=$(git log --pretty=format:'- %s' ${{ steps.tag.outputs.name }})
+          else
+            LOGS=$(git log --pretty=format:'- %s' ${PREV_TAG}..${{ steps.tag.outputs.name }})
+          fi
+          echo "logs<<EOF" >> $GITHUB_OUTPUT
+          echo "$LOGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: RigorMobile ${{ steps.tag.outputs.name }}
+          body: |
+            ## RigorMobile ${{ steps.tag.outputs.name }}
+
+            ### What's new
+            ${{ steps.changelog.outputs.logs }}
+
+            ### Downloads
+            - **Android APK**: see the `rigormobile-${{ github.sha }}` artifact in the
+              latest `Build APK` workflow run, or attach it manually here.
+            - **Web app**: build from source with `bun install && bun run build`
+              in `apps/web`.
+
+            ### Verifying the APK
+            ```
+            apksigner verify --print-certs rigormobile.apk
+            sha256sum rigormobile.apk
+            ```
+          draft: false
+          prerelease: ${{ contains(steps.tag.outputs.name, '-rc') || contains(steps.tag.outputs.name, '-beta') }}
+          generate_release_notes: false

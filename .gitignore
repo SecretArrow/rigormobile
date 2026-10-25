@@ -1,0 +1,68 @@
+# Bun + workspaces
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+
+# Build outputs
+.next
+out
+dist
+build
+coverage
+.turbo
+apps/web/.next
+apps/web/dev.log
+apps/web/server.log
+apps/android/.expo
+apps/android/android
+apps/android/ios
+apps/android/expo-env.d.ts
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.keystore
+*.jks
+mnemonic*.txt
+keystore*.jks
+service-account*.json
+
+# Local databases
+*.db
+*.db-journal
+db/
+apps/web/db/
+
+# Native build artifacts
+*.apk
+*.aab
+*.ipa
+*.tar.gz
+
+# Editor / OS
+.DS_Store
+.idea
+.vscode
+*.log
+dev.log
+dev.out.log
+server.log
+
+# Skills / sandbox internal
+/skills/
+/.zscripts/
+/upload/
+/work/
+/download/
+/scripts/
+
+# Lockfiles (keep bun.lock at root, ignore nested)
+apps/*/bun.lock
+packages/*/bun.lock
+
+# CI temp
+tmp/
+.cache/

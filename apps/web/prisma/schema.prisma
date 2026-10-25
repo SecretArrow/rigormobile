@@ -1,0 +1,38 @@
+// RigorMobile web app Prisma schema.
+// The wallet is stored in localStorage (encrypted); Prisma is only used for
+// optional server-side persistence of mining stats and cached RPC responses.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// One row per mining session. Updated by the miner via /api/stats.
+model MiningSession {
+  id           String   @id @default(cuid())
+  startedAt    DateTime @default(now())
+  endedAt      DateTime?
+  backend      String
+  parallelism  Int
+  totalHashes  BigInt   @default(0)
+  peakHashRate Float    @default(0)
+  solutions    Int      @default(0)
+  blockHeight  Int?
+  jobId        String?
+
+  @@index([startedAt])
+}
+
+/// Cached RPC responses (block template, mining info) to reduce node load.
+model RpcCache {
+  id        String   @id
+  method    String
+  payload   String
+  fetchedAt DateTime @default(now())
+
+  @@index([method, fetchedAt])
+}

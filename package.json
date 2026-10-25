@@ -1,0 +1,35 @@
+{
+  "name": "rigormobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RigorChain Web Miner + Web Wallet + Android GPU Miner APK — Next.js + React Native + GitHub Actions CI/CD",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "cd apps/web && bun run dev",
+    "build": "cd apps/web && bun run build",
+    "start": "cd apps/web && bun run start",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:e2e": "turbo run test:e2e",
+    "typecheck": "turbo run typecheck",
+    "db:push": "cd apps/web && bun run db:push",
+    "db:generate": "cd apps/web && bun run db:generate",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "clean": "turbo run clean && rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.3.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.1.0"
+  },
+  "packageManager": "bun@1.1.0"
+}

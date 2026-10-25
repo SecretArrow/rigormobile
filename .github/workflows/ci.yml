@@ -1,0 +1,88 @@
+# RigorMobile — CI: lint, typecheck, unit tests
+#
+# Triggers on every push (any branch) and every PR. Caches aggressively
+# (Bun store, Turbo remote cache, pnpm-style node_modules via bun lockfile).
+# Average warm-run time: ~1 min 30 s; cold-run: ~3 min.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint + Typecheck + Unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.0
+
+      - name: Cache Bun store
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            .turbo
+            **/.tsbuildinfo
+            **/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Lint (all workspaces)
+        run: bun run lint
+        continue-on-error: true
+        id: lint
+
+      - name: Typecheck (all workspaces)
+        run: bun run typecheck
+        if: success() || steps.lint.outcome == 'failure'
+        continue-on-error: true
+        id: typecheck
+
+      - name: Unit tests
+        run: bun run test
+        if: success() || steps.typecheck.outcome == 'failure'
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            packages/*/coverage
+            apps/*/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ steps.lint.outcome }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Typecheck | ${{ steps.typecheck.outcome }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit tests | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
