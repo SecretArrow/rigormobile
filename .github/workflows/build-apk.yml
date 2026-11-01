@@ -57,7 +57,7 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           # Space-separated list (the action's multi-line `|` parser has
           # issues with newlines on some runners — space form is reliable).
